@@ -9,13 +9,28 @@ import { UsersDialogs } from './components/users-dialogs'
 import { UsersPrimaryButtons } from './components/users-primary-buttons'
 import { UsersProvider } from './components/users-provider'
 import { UsersTable } from './components/users-table'
-import { users } from './data/users'
+import { useUsers } from './hooks/use-users'
 
 const route = getRouteApi('/_authenticated/users/')
 
 export function Users() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
+
+  // Parse isActive filter: "true" → true, "false" → false, "true,false"/undefined → undefined (no filter)
+  const parseIsActive = (): boolean | undefined => {
+    if (!search.isActive) return undefined
+    const vals = search.isActive.split(',').filter(Boolean)
+    if (vals.length === 1) return vals[0] === 'true'
+    return undefined // both selected = no filter
+  }
+
+  const { data, isLoading } = useUsers({
+    page: search.page || 1,
+    limit: search.pageSize || 10,
+    search: search.search || '',
+    isActive: parseIsActive(),
+  })
 
   return (
     <UsersProvider>
@@ -36,7 +51,13 @@ export function Users() {
           </div>
           <UsersPrimaryButtons />
         </div>
-        <UsersTable data={users} search={search} navigate={navigate} />
+        <UsersTable 
+          data={data?.data || []} 
+          search={search} 
+          navigate={navigate} 
+          isLoading={isLoading}
+          totalPages={data?.meta?.totalPages}
+        />
       </Main>
 
       <UsersDialogs />

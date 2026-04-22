@@ -7,7 +7,8 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { type User } from '../data/schema'
+import { type User } from '../services/user-service'
+import { useDeleteUser } from '../hooks/use-users'
 
 type UserDeleteDialogProps = {
   open: boolean
@@ -22,11 +23,19 @@ export function UsersDeleteDialog({
 }: UserDeleteDialogProps) {
   const [value, setValue] = useState('')
 
-  const handleDelete = () => {
-    if (value.trim() !== currentRow.username) return
+  const deleteUser = useDeleteUser()
 
-    onOpenChange(false)
-    showSubmittedData(currentRow, 'The following user has been deleted:')
+  const handleDelete = async () => {
+    if (value.trim() !== currentRow.email) return
+
+    try {
+      await deleteUser.mutateAsync(currentRow.id)
+      onOpenChange(false)
+      showSubmittedData(currentRow, 'The following user has been deleted:')
+    } catch (error: any) {
+      // toast or handle error
+      console.error(error)
+    }
   }
 
   return (
@@ -34,7 +43,7 @@ export function UsersDeleteDialog({
       open={open}
       onOpenChange={onOpenChange}
       form='users-delete-form'
-      disabled={value.trim() !== currentRow.username}
+      disabled={value.trim() !== currentRow.email || deleteUser.isPending}
       title={
         <span className='text-destructive'>
           <AlertTriangle
@@ -55,21 +64,21 @@ export function UsersDeleteDialog({
         >
           <p className='mb-2'>
             Are you sure you want to delete{' '}
-            <span className='font-bold'>{currentRow.username}</span>?
+            <span className='font-bold'>{currentRow.email}</span>?
             <br />
             This action will permanently remove the user with the role of{' '}
             <span className='font-bold'>
-              {currentRow.role.toUpperCase()}
+              {currentRow.role?.name?.toUpperCase() || '-'}
             </span>{' '}
             from the system. This cannot be undone.
           </p>
 
           <Label className='my-2'>
-            Username:
+            Email:
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder='Enter username to confirm deletion.'
+              placeholder='Enter email to confirm deletion.'
               autoFocus
             />
           </Label>
