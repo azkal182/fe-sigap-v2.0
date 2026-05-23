@@ -96,6 +96,24 @@ export const usersColumns: ColumnDef<User>[] = [
     enableHiding: false,
   },
   {
+    id: 'dormitoryScopeIds',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Dormitories' />
+    ),
+    cell: ({ row }) => {
+      const ids = row.original.dormitoryScopeIds ?? []
+      if (ids.length === 0) {
+        return <span className='ps-2 text-xs text-muted-foreground'>—</span>
+      }
+      return (
+        <Badge variant='secondary' className='text-xs'>
+          {ids.length} {ids.length === 1 ? 'dormitory' : 'dormitories'}
+        </Badge>
+      )
+    },
+    enableSorting: false,
+  },
+  {
     id: 'actions',
     cell: DataTableRowActions,
   },

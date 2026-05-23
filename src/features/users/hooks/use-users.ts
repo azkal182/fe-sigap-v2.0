@@ -154,7 +154,9 @@ export function useAssignUserScopes() {
     mutationFn: ({ userId, dto }: { userId: string; dto: AssignScopesDto }) =>
       scopeService.assignUserScopes(userId, dto),
     onSuccess: (_data, { userId }) => {
+      // Refresh per-user scopes and the users list (which has includeScopes=true)
       queryClient.invalidateQueries({ queryKey: ['user-scopes', userId] })
+      queryClient.invalidateQueries({ queryKey: ['users'] })
     },
   })
 }
@@ -165,7 +167,9 @@ export function useRemoveUserScopes() {
     mutationFn: ({ userId, dto }: { userId: string; dto: RemoveScopesDto }) =>
       scopeService.removeUserScopes(userId, dto),
     onSuccess: (_data, { userId }) => {
+      // Refresh per-user scopes and the users list (which has includeScopes=true)
       queryClient.invalidateQueries({ queryKey: ['user-scopes', userId] })
+      queryClient.invalidateQueries({ queryKey: ['users'] })
     },
   })
 }

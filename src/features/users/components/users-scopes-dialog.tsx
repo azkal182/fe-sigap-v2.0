@@ -40,28 +40,36 @@ export function UsersScopesDialog({
   onOpenChange,
   currentRow,
 }: UsersScopesDialogProps) {
-  // Fetch all dormitories (active only, high limit to get all)
+  // Fetch all dormitories (active only)
   const { data: dormitoriesRes, isLoading: isLoadingDorms } = useDormitories({
     limit: 100,
     isActive: true,
   })
   const dormitories = dormitoriesRes?.data ?? []
 
-  // Fetch current user scopes
+  // Use dormitoryScopeIds from the user object (from includeScopes=true on list endpoint)
+  // as the primary source. Fall back to separate API call for fresh data after mutations.
   const { data: scopes = [], isLoading: isLoadingScopes } = useUserScopes(
     currentRow.id
   )
+
   const assignMutation = useAssignUserScopes()
   const removeMutation = useRemoveUserScopes()
 
   const isLoading = isLoadingDorms || isLoadingScopes
   const isPending = assignMutation.isPending || removeMutation.isPending
 
-  // Build set of currently assigned dormitory IDs for quick lookup
+  // Priority: use fresh scopes from the dedicated endpoint (updated after mutations).
+  // Fall back to dormitoryScopeIds from the user list (includeScopes=true) for initial render.
   const assignedDormitoryIds = useMemo(() => {
-    const dormScope = scopes.find((s) => s.resource === 'dormitory')
-    return new Set(dormScope?.resourceIds ?? [])
-  }, [scopes])
+    // If the scopes API has returned data, use that (most up-to-date)
+    if (scopes.length > 0) {
+      const dormScope = scopes.find((s) => s.resource === 'dormitory')
+      return new Set(dormScope?.resourceIds ?? [])
+    }
+    // Otherwise use the pre-loaded data from the user list
+    return new Set(currentRow.dormitoryScopeIds ?? [])
+  }, [scopes, currentRow.dormitoryScopeIds])
 
   const handleToggle = async (dormitoryId: string, checked: boolean) => {
     if (checked) {
@@ -91,7 +99,7 @@ export function UsersScopesDialog({
     }
   }
 
-  // Group dormitories by gender for cleaner display
+  // Group dormitories by gender
   const grouped = useMemo(() => {
     return dormitories.reduce<Record<string, typeof dormitories>>(
       (acc, dorm) => {
@@ -115,7 +123,6 @@ export function UsersScopesDialog({
           <DialogDescription>
             Select which dormitories{' '}
             <span className='font-semibold'>{currentRow.name}</span> can access.
-            Unchecked dormitories will be inaccessible to this user.
           </DialogDescription>
         </DialogHeader>
 
@@ -140,7 +147,6 @@ export function UsersScopesDialog({
           ) : (
             Object.entries(grouped).map(([gender, dorms]) => (
               <div key={gender} className='mb-3'>
-                {/* Gender group header */}
                 <div className='mb-1 flex items-center gap-1.5'>
                   <Building size={12} className='text-muted-foreground' />
                   <p className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>

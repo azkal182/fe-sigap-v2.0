@@ -1,5 +1,10 @@
 import { api } from '@/lib/axios'
 
+export interface UserScope {
+  resource: string
+  resourceId: string
+}
+
 export interface User {
   id: string
   email: string
@@ -10,6 +15,10 @@ export interface User {
     name: string
   }
   createdAt?: string
+  /** Present when GET /users is called with includeScopes=true */
+  scopes?: UserScope[]
+  /** Flat array of dormitory IDs — present when includeScopes=true */
+  dormitoryScopeIds?: string[]
 }
 
 export interface PaginationParams {
@@ -19,6 +28,7 @@ export interface PaginationParams {
   sortOrder?: 'asc' | 'desc'
   search?: string
   isActive?: boolean
+  includeScopes?: boolean
 }
 
 export interface PaginatedResponse<T> {

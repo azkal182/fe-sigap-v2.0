@@ -30,6 +30,7 @@ export function Users() {
     limit: search.pageSize || 10,
     search: search.search || '',
     isActive: parseIsActive(),
+    includeScopes: true,
   })
 
   return (
