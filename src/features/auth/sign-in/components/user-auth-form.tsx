@@ -45,8 +45,8 @@ export function UserAuthForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'admin@example.com',
+      password: 'Admin@123456',
     },
   })
 
@@ -55,9 +55,9 @@ export function UserAuthForm({
 
     try {
       const response = await authService.login(data)
-      
+
       auth.setTokens(response.accessToken, response.refreshToken)
-      
+
       // We can also fetch the profile right after or use the returned user object
       auth.setUser({
         id: response.user.id,
@@ -66,7 +66,7 @@ export function UserAuthForm({
       })
 
       toast.success(`Welcome back, ${response.user.name}!`)
-      
+
       const targetPath = redirectTo || '/'
       navigate({ to: targetPath, replace: true })
     } catch (error: any) {

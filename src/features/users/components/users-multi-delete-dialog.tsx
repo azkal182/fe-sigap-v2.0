@@ -4,11 +4,12 @@ import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { type User } from '../services/user-service'
+import { useBulkDeleteUsers } from '../hooks/use-users'
 
 type UserMultiDeleteDialogProps<TData> = {
   open: boolean
@@ -24,44 +25,49 @@ export function UsersMultiDeleteDialog<TData>({
   table,
 }: UserMultiDeleteDialogProps<TData>) {
   const [value, setValue] = useState('')
+  const bulkDelete = useBulkDeleteUsers()
 
   const selectedRows = table.getFilteredSelectedRowModel().rows
+  const selectedIds = selectedRows.map((row) => (row.original as User).id)
+  const count = selectedIds.length
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (value.trim() !== CONFIRM_WORD) {
       toast.error(`Please type "${CONFIRM_WORD}" to confirm.`)
       return
     }
 
-    onOpenChange(false)
-
-    toast.promise(sleep(2000), {
-      loading: 'Deleting users...',
-      success: () => {
-        setValue('')
-        table.resetRowSelection()
-        return `Deleted ${selectedRows.length} ${
-          selectedRows.length > 1 ? 'users' : 'user'
-        }`
-      },
-      error: 'Error',
-    })
+    try {
+      await bulkDelete.mutateAsync(selectedIds)
+      toast.success(
+        `Deleted ${count} ${count > 1 ? 'users' : 'user'} successfully`
+      )
+      setValue('')
+      table.resetRowSelection()
+      onOpenChange(false)
+    } catch (err: any) {
+      toast.error(
+        err?.response?.data?.message || 'Failed to delete selected users'
+      )
+    }
   }
 
   return (
     <ConfirmDialog
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={(state) => {
+        if (!state) setValue('')
+        onOpenChange(state)
+      }}
       form='users-multi-delete-form'
-      disabled={value.trim() !== CONFIRM_WORD}
+      disabled={value.trim() !== CONFIRM_WORD || bulkDelete.isPending}
       title={
         <span className='text-destructive'>
           <AlertTriangle
             className='me-1 inline-block stroke-destructive'
             size={18}
           />{' '}
-          Delete {selectedRows.length}{' '}
-          {selectedRows.length > 1 ? 'users' : 'user'}
+          Delete {count} {count > 1 ? 'users' : 'user'}
         </span>
       }
       desc={
@@ -74,12 +80,16 @@ export function UsersMultiDeleteDialog<TData>({
           className='space-y-4'
         >
           <p className='mb-2'>
-            Are you sure you want to delete the selected users? <br />
+            Are you sure you want to delete <strong>{count}</strong> selected{' '}
+            {count > 1 ? 'users' : 'user'}?
+            <br />
             This action cannot be undone.
           </p>
 
           <Label className='my-4 flex flex-col items-start gap-1.5'>
-            <span className=''>Confirm by typing "{CONFIRM_WORD}":</span>
+            <span>
+              Confirm by typing &ldquo;{CONFIRM_WORD}&rdquo;:
+            </span>
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}
@@ -91,7 +101,7 @@ export function UsersMultiDeleteDialog<TData>({
           <Alert variant='destructive'>
             <AlertTitle>Warning!</AlertTitle>
             <AlertDescription>
-              Please be careful, this operation can not be rolled back.
+              Please be careful, this operation cannot be rolled back.
             </AlertDescription>
           </Alert>
         </form>

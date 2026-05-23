@@ -25,7 +25,7 @@ Version: 1.0
 
 #### Responses
 
-- **201**: 
+- **201**:
 
 ---
 
@@ -46,7 +46,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -66,7 +66,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -80,7 +80,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -94,7 +94,27 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
+
+```typescript
+{
+  id: string;
+  email: string;
+  name: string;
+  isActive: boolean;
+  role: {
+    id: string | null;
+    name: string | null;
+    isSystem: boolean | null;
+  };
+  permissions: string[];
+  teacher?: {
+    id: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+```
 
 ---
 
@@ -121,7 +141,7 @@ Version: 1.0
 
 #### Responses
 
-- **201**: 
+- **201**:
 
 ---
 
@@ -146,7 +166,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -166,7 +186,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -198,7 +218,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -218,7 +238,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -238,7 +258,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -266,7 +286,7 @@ Version: 1.0
 
 #### Responses
 
-- **201**: 
+- **201**:
 
 ---
 
@@ -287,7 +307,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -307,7 +327,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -336,7 +356,7 @@ Version: 1.0
 
 #### Responses
 
-- **201**: 
+- **201**:
 
 ---
 
@@ -365,7 +385,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -390,7 +410,7 @@ Version: 1.0
 
 #### Responses
 
-- **201**: 
+- **201**:
 
 ---
 
@@ -415,7 +435,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -435,7 +455,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -464,7 +484,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -484,7 +504,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -512,7 +532,7 @@ Version: 1.0
 
 #### Responses
 
-- **201**: 
+- **201**:
 
 ---
 
@@ -540,7 +560,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -561,7 +581,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -583,7 +603,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -602,14 +622,14 @@ Version: 1.0
 ```typescript
 {
   name: string;
-  code: string;
-  address?: string;
+  level: number;
+  gender: 'PUTRA' | 'PUTRI';
 }
 ```
 
 #### Responses
 
-- **201**: 
+- **201**:
 
 ---
 
@@ -630,11 +650,13 @@ Version: 1.0
 | sortBy | query | No | string |  |
 | sortOrder | query | No | string |  |
 | search | query | No | string | Generic text search |
+| level | query | No | number | Filter by dormitory level |
+| gender | query | No | PUTRA \| PUTRI | Filter by dormitory gender |
 | isActive | query | No | boolean | Filter by active status |
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -654,7 +676,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -677,15 +699,15 @@ Version: 1.0
 ```typescript
 {
   name?: string;
-  code?: string;
-  address?: string;
+  level?: number;
+  gender?: 'PUTRA' | 'PUTRI';
   isActive?: boolean;
 }
 ```
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -705,7 +727,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -723,16 +745,26 @@ Version: 1.0
 
 ```typescript
 {
-  nim: string;
+  nis: string;
   name: string;
-  email?: string;
-  dormitoryId: string;
+  placeOfBirth: string;
+  dateOfBirth: string;
+  address?: string;
+  fatherName?: string;
+  motherName?: string;
+  parentPhone?: string;
+  gender?: 'PUTRA' | 'PUTRI';
+  dormitoryId?: string;
+  status?: 'ACTIVE' | 'TRANSFERRED' | 'GRADUATED';
+  exitDate?: string;
+  exitReason?: string;
+  exitNotes?: string;
 }
 ```
 
 #### Responses
 
-- **201**: 
+- **201**:
 
 ---
 
@@ -753,11 +785,24 @@ Version: 1.0
 | sortBy | query | No | string |  |
 | sortOrder | query | No | string |  |
 | search | query | No | string | Generic text search |
-| isActive | query | No | boolean | Filter by active status |
+| nis | query | No | string | Filter by NIS |
+| name | query | No | string | Filter by student name |
+| placeOfBirth | query | No | string | Filter by place of birth |
+| dormitoryId | query | No | string | Filter by dormitory ID |
+| gender | query | No | PUTRA \| PUTRI | Filter by gender |
+| status | query | No | ACTIVE \| TRANSFERRED \| GRADUATED | Filter by student status |
+| fatherName | query | No | string | Filter by father name |
+| motherName | query | No | string | Filter by mother name |
+| parentPhone | query | No | string | Filter by parent phone |
+| bornFrom | query | No | string | Birth date lower bound |
+| bornTo | query | No | string | Birth date upper bound |
+| exitFrom | query | No | string | Exit date lower bound |
+| exitTo | query | No | string | Exit date upper bound |
+| hasDormitory | query | No | boolean | Filter by dormitory assignment status |
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -777,7 +822,7 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -799,17 +844,26 @@ Version: 1.0
 
 ```typescript
 {
-  nim?: string;
+  nis?: string;
   name?: string;
-  email?: string;
+  placeOfBirth?: string;
+  dateOfBirth?: string;
+  address?: string;
+  fatherName?: string;
+  motherName?: string;
+  parentPhone?: string;
+  gender?: 'PUTRA' | 'PUTRI';
   dormitoryId?: string;
-  isActive?: boolean;
+  status?: 'ACTIVE' | 'TRANSFERRED' | 'GRADUATED';
+  exitDate?: string;
+  exitReason?: string;
+  exitNotes?: string;
 }
 ```
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
@@ -829,7 +883,224 @@ Version: 1.0
 
 #### Responses
 
-- **200**: 
+- **200**:
 
 ---
 
+## Teachers
+
+### Create a teacher
+
+**Method:** `POST`
+
+**Endpoint:** `/teachers`
+
+**Requires Authentication:** Yes
+
+#### Request Body
+
+```typescript
+{
+  name: string;
+  userId?: string;
+  phone?: string;
+  dormitoryIds?: string[];
+}
+```
+
+#### Responses
+
+- **201**:
+
+---
+
+### List teachers (scope-aware via dormitory)
+
+**Method:** `GET`
+
+**Endpoint:** `/teachers`
+
+**Requires Authentication:** Yes
+
+#### Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| page | query | No | number |  |
+| limit | query | No | number |  |
+| sortBy | query | No | string |  |
+| sortOrder | query | No | string |  |
+| search | query | No | string | Generic text search |
+| userId | query | No | string | Filter by linked user ID |
+| dormitoryId | query | No | string | Filter by assigned dormitory ID |
+| hasUser | query | No | boolean | Filter by linked-user availability |
+| isActive | query | No | boolean | Filter by active status |
+
+#### Responses
+
+- **200**:
+
+---
+
+### Find teacher by ID (scope-aware)
+
+**Method:** `GET`
+
+**Endpoint:** `/teachers/{id}`
+
+**Requires Authentication:** Yes
+
+#### Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| id | path | Yes | string |  |
+
+#### Responses
+
+- **200**:
+
+---
+
+### Update a teacher
+
+**Method:** `PATCH`
+
+**Endpoint:** `/teachers/{id}`
+
+**Requires Authentication:** Yes
+
+#### Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| id | path | Yes | string |  |
+
+#### Request Body
+
+```typescript
+{
+  name?: string;
+  userId?: string;
+  phone?: string;
+  dormitoryIds?: string[];
+  isActive?: boolean;
+}
+```
+
+#### Responses
+
+- **200**:
+
+---
+
+### Create or link a teacher login user
+
+**Method:** `POST`
+
+**Endpoint:** `/teachers/{id}/user`
+
+**Requires Authentication:** Yes
+
+#### Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| id | path | Yes | string | Teacher ID |
+
+#### Request Body
+
+Create a new login user:
+
+```typescript
+{
+  email: string;
+  password: string;
+  name?: string;
+}
+```
+
+Or link an existing non-system user:
+
+```typescript
+{
+  userId: string;
+}
+```
+
+#### Responses
+
+- **201**:
+
+---
+
+### Update a teacher login user
+
+**Method:** `PATCH`
+
+**Endpoint:** `/teachers/{id}/user`
+
+**Requires Authentication:** Yes
+
+#### Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| id | path | Yes | string | Teacher ID |
+
+#### Request Body
+
+```typescript
+{
+  email?: string;
+  password?: string;
+  name?: string;
+  isActive?: boolean;
+}
+```
+
+#### Responses
+
+- **200**:
+
+---
+
+### Deactivate a teacher login user
+
+**Method:** `DELETE`
+
+**Endpoint:** `/teachers/{id}/user`
+
+**Requires Authentication:** Yes
+
+#### Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| id | path | Yes | string | Teacher ID |
+
+#### Responses
+
+- **200**:
+
+---
+
+### Delete a teacher
+
+**Method:** `DELETE`
+
+**Endpoint:** `/teachers/{id}`
+
+**Requires Authentication:** Yes
+
+#### Parameters
+
+| Name | In | Required | Type | Description |
+| --- | --- | --- | --- | --- |
+| id | path | Yes | string |  |
+
+#### Responses
+
+- **200**:
+
+---
