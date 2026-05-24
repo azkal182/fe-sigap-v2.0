@@ -40,18 +40,16 @@ export function UsersScopesDialog({
   onOpenChange,
   currentRow,
 }: UsersScopesDialogProps) {
-  // Fetch all dormitories (active only)
+  // Fetch all active dormitories
   const { data: dormitoriesRes, isLoading: isLoadingDorms } = useDormitories({
     limit: 100,
     isActive: true,
   })
   const dormitories = dormitoriesRes?.data ?? []
 
-  // Use dormitoryScopeIds from the user object (from includeScopes=true on list endpoint)
-  // as the primary source. Fall back to separate API call for fresh data after mutations.
-  const { data: scopes = [], isLoading: isLoadingScopes } = useUserScopes(
-    currentRow.id
-  )
+  // Fetch fresh scopes via GET /users/:id/scopes
+  // API returns: [{ resource: "dormitory", resourceId: "id1" }, { resource: "dormitory", resourceId: "id2" }, ...]
+  const { data: scopes, isLoading: isLoadingScopes } = useUserScopes(currentRow.id)
 
   const assignMutation = useAssignUserScopes()
   const removeMutation = useRemoveUserScopes()
@@ -59,17 +57,24 @@ export function UsersScopesDialog({
   const isLoading = isLoadingDorms || isLoadingScopes
   const isPending = assignMutation.isPending || removeMutation.isPending
 
-  // Priority: use fresh scopes from the dedicated endpoint (updated after mutations).
-  // Fall back to dormitoryScopeIds from the user list (includeScopes=true) for initial render.
+  /**
+   * Build the set of assigned dormitory IDs:
+   * 1. While useUserScopes is still loading → use pre-loaded dormitoryScopeIds (from includeScopes=true)
+   * 2. Once loaded → aggregate all entries with resource="dormitory" from the fresh scopes data
+   *
+   * The API returns entries as [{ resource, resourceId }] (one ID per entry, not an array).
+   */
   const assignedDormitoryIds = useMemo(() => {
-    // If the scopes API has returned data, use that (most up-to-date)
-    if (scopes.length > 0) {
-      const dormScope = scopes.find((s) => s.resource === 'dormitory')
-      return new Set(dormScope?.resourceIds ?? [])
+    if (isLoadingScopes || scopes === undefined) {
+      // Use pre-loaded data from the users list (includeScopes=true) for instant display
+      return new Set(currentRow.dormitoryScopeIds ?? [])
     }
-    // Otherwise use the pre-loaded data from the user list
-    return new Set(currentRow.dormitoryScopeIds ?? [])
-  }, [scopes, currentRow.dormitoryScopeIds])
+    // Aggregate resourceId from all dormitory-scoped entries
+    const ids = scopes
+      .filter((s) => s.resource === 'dormitory')
+      .map((s) => s.resourceId)
+    return new Set(ids)
+  }, [scopes, isLoadingScopes, currentRow.dormitoryScopeIds])
 
   const handleToggle = async (dormitoryId: string, checked: boolean) => {
     if (checked) {
@@ -99,7 +104,7 @@ export function UsersScopesDialog({
     }
   }
 
-  // Group dormitories by gender
+  // Group dormitories by gender for cleaner display
   const grouped = useMemo(() => {
     return dormitories.reduce<Record<string, typeof dormitories>>(
       (acc, dorm) => {
@@ -133,6 +138,9 @@ export function UsersScopesDialog({
           <span className='text-xs text-muted-foreground'>
             of {dormitories.length} dormitories
           </span>
+          {isLoadingScopes && (
+            <Loader2 className='h-3 w-3 animate-spin text-muted-foreground' />
+          )}
         </div>
 
         <ScrollArea className='h-72 rounded-md border px-3 py-2'>
@@ -173,7 +181,7 @@ export function UsersScopesDialog({
                           <span>{dorm.name}</span>
                           <Badge
                             variant='outline'
-                            className='text-[10px] px-1 h-4'
+                            className='h-4 px-1 text-[10px]'
                           >
                             Level {dorm.level}
                           </Badge>

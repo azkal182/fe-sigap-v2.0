@@ -27,7 +27,8 @@ export interface AssignPermissionsDto {
 
 export interface UserScope {
   resource: string
-  resourceIds: string[]
+  /** Each scope entry carries a single resource ID (matches the API format) */
+  resourceId: string
 }
 
 export interface AssignScopesDto {
