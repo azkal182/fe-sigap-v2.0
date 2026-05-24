@@ -127,7 +127,10 @@ export function StudentsActionDialog({
   const onSubmit = async (values: StudentForm) => {
     const payload = {
       ...values,
-      dormitoryId: values.dormitoryId || undefined,
+      // Convert sentinel value to undefined (no dormitory)
+      dormitoryId: values.dormitoryId && values.dormitoryId !== '__none__'
+        ? values.dormitoryId
+        : undefined,
       exitDate: values.exitDate || undefined,
       exitReason: values.exitReason || undefined,
       exitNotes: values.exitNotes || undefined,
@@ -152,8 +155,8 @@ export function StudentsActionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='sm:max-w-2xl'>
-        <DialogHeader className='text-start'>
+      <DialogContent className='flex max-h-[90vh] flex-col gap-0 p-0 sm:max-w-2xl'>
+        <DialogHeader className='shrink-0 px-6 pt-6 text-start'>
           <DialogTitle>{isEdit ? 'Edit Student' : 'Add New Student'}</DialogTitle>
           <DialogDescription>
             {isEdit
@@ -166,23 +169,19 @@ export function StudentsActionDialog({
           <form
             id='student-form'
             onSubmit={form.handleSubmit(onSubmit)}
+            className='flex min-h-0 flex-1 flex-col'
           >
+            <div className='flex-1 overflow-y-auto px-6 py-4'>
             <Tabs defaultValue='personal' className='w-full'>
-              <TabsList className='mb-4 w-full'>
-                <TabsTrigger value='personal' className='flex-1'>
-                  Personal Info
-                </TabsTrigger>
-                <TabsTrigger value='parent' className='flex-1'>
-                  Parent Info
-                </TabsTrigger>
-                <TabsTrigger value='school' className='flex-1'>
-                  School & Status
-                </TabsTrigger>
+              <TabsList className='mb-4 grid w-full grid-cols-3'>
+                <TabsTrigger value='personal'>Personal</TabsTrigger>
+                <TabsTrigger value='parent'>Parent</TabsTrigger>
+                <TabsTrigger value='school'>School</TabsTrigger>
               </TabsList>
 
               {/* ── Tab 1: Personal ─────────────────────────────────── */}
-              <TabsContent value='personal' className='space-y-4 mt-0'>
-                <div className='grid grid-cols-2 gap-4'>
+              <TabsContent value='personal' className='mt-0 space-y-4'>
+                <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                   <FormField
                     control={form.control}
                     name='nis'
@@ -228,7 +227,7 @@ export function StudentsActionDialog({
                   )}
                 />
 
-                <div className='grid grid-cols-2 gap-4'>
+                <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                   <FormField
                     control={form.control}
                     name='placeOfBirth'
@@ -320,8 +319,8 @@ export function StudentsActionDialog({
               </TabsContent>
 
               {/* ── Tab 3: School & Status ──────────────────────────── */}
-              <TabsContent value='school' className='space-y-4 mt-0'>
-                <div className='grid grid-cols-2 gap-4'>
+              <TabsContent value='school' className='mt-0 space-y-4'>
+                <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
                   <FormField
                     control={form.control}
                     name='dormitoryId'
@@ -329,11 +328,13 @@ export function StudentsActionDialog({
                       <FormItem>
                         <FormLabel>Dormitory</FormLabel>
                         <SelectDropdown
-                          defaultValue={field.value}
-                          onValueChange={field.onChange}
+                          defaultValue={field.value || '__none__'}
+                          onValueChange={(v) =>
+                            field.onChange(v === '__none__' ? '' : v)
+                          }
                           placeholder='Select dormitory'
                           items={[
-                            { label: 'None', value: '' },
+                            { label: 'None', value: '__none__' },
                             ...dormitoryOptions,
                           ]}
                         />
@@ -405,10 +406,11 @@ export function StudentsActionDialog({
                 )}
               </TabsContent>
             </Tabs>
+            </div>
           </form>
         </Form>
 
-        <DialogFooter>
+        <DialogFooter className='shrink-0 border-t px-6 py-4'>
           <Button variant='outline' onClick={() => onOpenChange(false)}>
             Cancel
           </Button>
