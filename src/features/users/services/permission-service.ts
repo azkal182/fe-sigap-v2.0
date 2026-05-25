@@ -52,10 +52,10 @@ export const permissionService = {
     return response.data as Permission[]
   },
 
-  /** GET /users/:id/permissions — effective permissions (role + direct) */
-  getUserPermissions: async (userId: string): Promise<UserEffectivePermissions> => {
+  /** GET /users/:id/permissions — returns direct permissions assigned to the user */
+  getUserPermissions: async (userId: string): Promise<Permission[]> => {
     const response = await api.get(`/users/${userId}/permissions`) as any
-    return response.data as UserEffectivePermissions
+    return response.data as Permission[]
   },
 
   /** POST /users/:id/permissions — assign direct permissions to user */

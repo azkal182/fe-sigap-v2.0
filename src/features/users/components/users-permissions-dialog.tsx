@@ -38,25 +38,41 @@ export function UsersPermissionsDialog({
 }: UsersPermissionsDialogProps) {
   const [search, setSearch] = useState('')
 
+  // All available system permissions
   const { data: allPermissions = [], isLoading: isLoadingAll } = useAllPermissions()
-  const { data: userPerms, isLoading: isLoadingUser } = useUserPermissions(currentRow.id)
+
+  // Direct permissions assigned to this user via GET /users/:id/permissions
+  // API returns: Permission[] (flat array of directly assigned permissions)
+  const { data: directPermsData, isLoading: isLoadingDirect } = useUserPermissions(currentRow.id)
+
   const assignMutation = useAssignUserPermissions()
   const removeMutation = useRemoveUserPermission()
 
-  const isLoading = isLoadingAll || isLoadingUser
+  const isLoading = isLoadingAll || isLoadingDirect
   const isPending = assignMutation.isPending || removeMutation.isPending
 
-  // Sets of permission names for quick lookup
-  const fromRoleSet = useMemo(
-    () => new Set(userPerms?.fromRole ?? []),
-    [userPerms]
-  )
-  const directSet = useMemo(
-    () => new Set(userPerms?.direct ?? []),
-    [userPerms]
-  )
+  /**
+   * Build lookup sets:
+   * - fromRoleSet: permission IDs from the user's role (from currentRow.role.permissions)
+   * - directSet:   permission IDs directly assigned (from GET /users/:id/permissions)
+   *
+   * We use IDs (not names) to avoid name-based matching issues.
+   */
+  const fromRoleSet = useMemo(() => {
+    const ids = (currentRow.role?.permissions ?? []).map((p) => p.id)
+    return new Set(ids)
+  }, [currentRow.role?.permissions])
 
-  // Group all permissions by resource
+  const directSet = useMemo(() => {
+    // While loading, fall back to directPermissions from the user list response
+    if (isLoadingDirect || directPermsData === undefined) {
+      return new Set((currentRow.directPermissions ?? []).map((p) => p.id))
+    }
+    // Once loaded, use fresh data from GET /users/:id/permissions
+    return new Set(directPermsData.map((p) => p.id))
+  }, [directPermsData, isLoadingDirect, currentRow.directPermissions])
+
+  // Group all permissions by resource with search filter
   const grouped = useMemo(() => {
     const q = search.toLowerCase()
     const filtered = allPermissions.filter(
@@ -73,9 +89,12 @@ export function UsersPermissionsDialog({
     }, {})
   }, [allPermissions, search])
 
-  const handleToggle = async (permissionId: string, permissionName: string, checked: boolean) => {
+  const handleToggle = async (
+    permissionId: string,
+    permissionName: string,
+    checked: boolean
+  ) => {
     if (checked) {
-      // Assign direct permission
       try {
         await assignMutation.mutateAsync({
           userId: currentRow.id,
@@ -86,7 +105,6 @@ export function UsersPermissionsDialog({
         toast.error(err?.response?.data?.message || 'Failed to assign permission')
       }
     } else {
-      // Remove direct permission
       try {
         await removeMutation.mutateAsync({
           userId: currentRow.id,
@@ -98,6 +116,9 @@ export function UsersPermissionsDialog({
       }
     }
   }
+
+  const totalDirect = directSet.size
+  const totalFromRole = fromRoleSet.size
 
   return (
     <Dialog
@@ -114,19 +135,23 @@ export function UsersPermissionsDialog({
             Manage Permissions
           </DialogTitle>
           <DialogDescription>
-            Direct permissions for{' '}
+            Permissions for{' '}
             <span className='font-semibold'>{currentRow.name}</span>.
-            Permissions inherited from the role are shown but cannot be unchecked here.
+            Role-inherited permissions are read-only.
           </DialogDescription>
         </DialogHeader>
 
-        <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-          <Badge variant='outline' className='gap-1 text-green-600 border-green-600'>
-            <ShieldCheck size={11} /> From role
+        {/* Legend + counters */}
+        <div className='flex flex-wrap items-center gap-2 text-xs text-muted-foreground'>
+          <Badge variant='outline' className='gap-1 border-green-600 text-green-600'>
+            <ShieldCheck size={11} /> From role ({totalFromRole})
           </Badge>
-          <Badge variant='outline' className='gap-1 text-blue-600 border-blue-600'>
-            <ShieldOff size={11} /> Direct
+          <Badge variant='outline' className='gap-1 border-blue-600 text-blue-600'>
+            <ShieldOff size={11} /> Direct ({totalDirect})
           </Badge>
+          {isLoadingDirect && (
+            <Loader2 className='h-3 w-3 animate-spin text-muted-foreground' />
+          )}
         </div>
 
         <Input
@@ -153,14 +178,16 @@ export function UsersPermissionsDialog({
                 </p>
                 <div className='space-y-1'>
                   {perms.map((perm) => {
-                    const isFromRole = fromRoleSet.has(perm.name)
-                    const isDirect = directSet.has(perm.name)
+                    const isFromRole = fromRoleSet.has(perm.id)
+                    const isDirect = directSet.has(perm.id)
                     const isChecked = isFromRole || isDirect
 
                     return (
                       <label
                         key={perm.id}
-                        className='flex cursor-pointer items-center gap-2 rounded-sm px-1 py-1 text-sm hover:bg-muted'
+                        className={`flex cursor-pointer items-center gap-2 rounded-sm px-1 py-1 text-sm hover:bg-muted ${
+                          isFromRole ? 'cursor-not-allowed opacity-70' : ''
+                        }`}
                       >
                         <Checkbox
                           checked={isChecked}
@@ -173,7 +200,7 @@ export function UsersPermissionsDialog({
                         {isFromRole && (
                           <Badge
                             variant='outline'
-                            className='h-4 px-1 text-[10px] text-green-600 border-green-600'
+                            className='h-4 px-1 text-[10px] border-green-600 text-green-600'
                           >
                             role
                           </Badge>
@@ -181,7 +208,7 @@ export function UsersPermissionsDialog({
                         {isDirect && (
                           <Badge
                             variant='outline'
-                            className='h-4 px-1 text-[10px] text-blue-600 border-blue-600'
+                            className='h-4 px-1 text-[10px] border-blue-600 text-blue-600'
                           >
                             direct
                           </Badge>

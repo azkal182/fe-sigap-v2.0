@@ -5,6 +5,15 @@ export interface UserScope {
   resourceId: string
 }
 
+/** Minimal permission shape returned inline in user list */
+export interface InlinePermission {
+  id: string
+  resource: string
+  action: string
+  name: string
+  description?: string
+}
+
 export interface User {
   id: string
   email: string
@@ -13,7 +22,12 @@ export interface User {
   role?: {
     id: string
     name: string
+    isSystem?: boolean
+    /** Permissions inherited via the role */
+    permissions?: InlinePermission[]
   }
+  /** Direct permissions assigned to this user (present in user list response) */
+  directPermissions?: InlinePermission[]
   createdAt?: string
   /** Present when GET /users is called with includeScopes=true */
   scopes?: UserScope[]
