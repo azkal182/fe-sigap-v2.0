@@ -85,7 +85,7 @@ export function RolesPermissionsDialog({
     })
   }
 
-  const handleSelectAll = (resource: string, perms: typeof allPermissions) => {
+  const handleSelectAll = (_resource: string, perms: typeof allPermissions) => {
     setSelectedIds((prev) => {
       const next = new Set(prev)
       const allChecked = perms.every((p) => prev.has(p.id))

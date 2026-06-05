@@ -11,6 +11,9 @@ import {
   Bell,
   Monitor,
   Command,
+  BookOpen,
+  BookMarked,
+  CalendarDays,
 } from 'lucide-react'
 import { type SidebarData } from '../types'
 
@@ -70,6 +73,26 @@ export const sidebarData: SidebarData = {
           title: 'Students',
           url: '/students',
           icon: GraduationCap,
+        },
+      ],
+    },
+    {
+      title: 'Academic',
+      items: [
+        {
+          title: 'Classrooms',
+          url: '/classrooms',
+          icon: BookOpen,
+        },
+        {
+          title: 'Subjects',
+          url: '/subjects',
+          icon: BookMarked,
+        },
+        {
+          title: 'Schedules',
+          url: '/schedules',
+          icon: CalendarDays,
         },
       ],
     },
