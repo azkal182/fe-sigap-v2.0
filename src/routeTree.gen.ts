@@ -27,6 +27,7 @@ import { Route as AuthenticatedSubjectsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedStudentsIndexRouteImport } from './routes/_authenticated/students/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedSchedulesIndexRouteImport } from './routes/_authenticated/schedules/index'
+import { Route as AuthenticatedScheduleSlotsIndexRouteImport } from './routes/_authenticated/schedule-slots/index'
 import { Route as AuthenticatedRolesIndexRouteImport } from './routes/_authenticated/roles/index'
 import { Route as AuthenticatedPermissionsIndexRouteImport } from './routes/_authenticated/permissions/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
@@ -132,6 +133,12 @@ const AuthenticatedSchedulesIndexRoute =
     path: '/schedules/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedScheduleSlotsIndexRoute =
+  AuthenticatedScheduleSlotsIndexRouteImport.update({
+    id: '/schedule-slots/',
+    path: '/schedule-slots/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedRolesIndexRoute = AuthenticatedRolesIndexRouteImport.update({
   id: '/roles/',
   path: '/roles/',
@@ -215,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/permissions/': typeof AuthenticatedPermissionsIndexRoute
   '/roles/': typeof AuthenticatedRolesIndexRoute
+  '/schedule-slots/': typeof AuthenticatedScheduleSlotsIndexRoute
   '/schedules/': typeof AuthenticatedSchedulesIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/students/': typeof AuthenticatedStudentsIndexRoute
@@ -243,6 +251,7 @@ export interface FileRoutesByTo {
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/permissions': typeof AuthenticatedPermissionsIndexRoute
   '/roles': typeof AuthenticatedRolesIndexRoute
+  '/schedule-slots': typeof AuthenticatedScheduleSlotsIndexRoute
   '/schedules': typeof AuthenticatedSchedulesIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/students': typeof AuthenticatedStudentsIndexRoute
@@ -274,6 +283,7 @@ export interface FileRoutesById {
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/permissions/': typeof AuthenticatedPermissionsIndexRoute
   '/_authenticated/roles/': typeof AuthenticatedRolesIndexRoute
+  '/_authenticated/schedule-slots/': typeof AuthenticatedScheduleSlotsIndexRoute
   '/_authenticated/schedules/': typeof AuthenticatedSchedulesIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/students/': typeof AuthenticatedStudentsIndexRoute
@@ -305,6 +315,7 @@ export interface FileRouteTypes {
     | '/help-center/'
     | '/permissions/'
     | '/roles/'
+    | '/schedule-slots/'
     | '/schedules/'
     | '/settings/'
     | '/students/'
@@ -333,6 +344,7 @@ export interface FileRouteTypes {
     | '/help-center'
     | '/permissions'
     | '/roles'
+    | '/schedule-slots'
     | '/schedules'
     | '/settings'
     | '/students'
@@ -363,6 +375,7 @@ export interface FileRouteTypes {
     | '/_authenticated/help-center/'
     | '/_authenticated/permissions/'
     | '/_authenticated/roles/'
+    | '/_authenticated/schedule-slots/'
     | '/_authenticated/schedules/'
     | '/_authenticated/settings/'
     | '/_authenticated/students/'
@@ -512,6 +525,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSchedulesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/schedule-slots/': {
+      id: '/_authenticated/schedule-slots/'
+      path: '/schedule-slots'
+      fullPath: '/schedule-slots/'
+      preLoaderRoute: typeof AuthenticatedScheduleSlotsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/roles/': {
       id: '/_authenticated/roles/'
       path: '/roles'
@@ -617,6 +637,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedPermissionsIndexRoute: typeof AuthenticatedPermissionsIndexRoute
   AuthenticatedRolesIndexRoute: typeof AuthenticatedRolesIndexRoute
+  AuthenticatedScheduleSlotsIndexRoute: typeof AuthenticatedScheduleSlotsIndexRoute
   AuthenticatedSchedulesIndexRoute: typeof AuthenticatedSchedulesIndexRoute
   AuthenticatedStudentsIndexRoute: typeof AuthenticatedStudentsIndexRoute
   AuthenticatedSubjectsIndexRoute: typeof AuthenticatedSubjectsIndexRoute
@@ -632,6 +653,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedPermissionsIndexRoute: AuthenticatedPermissionsIndexRoute,
   AuthenticatedRolesIndexRoute: AuthenticatedRolesIndexRoute,
+  AuthenticatedScheduleSlotsIndexRoute: AuthenticatedScheduleSlotsIndexRoute,
   AuthenticatedSchedulesIndexRoute: AuthenticatedSchedulesIndexRoute,
   AuthenticatedStudentsIndexRoute: AuthenticatedStudentsIndexRoute,
   AuthenticatedSubjectsIndexRoute: AuthenticatedSubjectsIndexRoute,

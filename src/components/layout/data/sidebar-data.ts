@@ -14,6 +14,7 @@ import {
   BookOpen,
   BookMarked,
   CalendarDays,
+  Clock,
 } from 'lucide-react'
 import { type SidebarData } from '../types'
 
@@ -68,6 +69,11 @@ export const sidebarData: SidebarData = {
           title: 'Dormitories',
           url: '/dormitories',
           icon: Building,
+        },
+        {
+          title: 'Schedule Slots',
+          url: '/schedule-slots',
+          icon: Clock,
         },
         {
           title: 'Students',
