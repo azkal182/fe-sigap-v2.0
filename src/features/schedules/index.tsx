@@ -1,11 +1,25 @@
+'use client'
+
+import { useState } from 'react'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { CalendarDays, Construction } from 'lucide-react'
+import { ScheduleContextBanner } from './components/schedule-context-banner'
+import { ScheduleFilterBar, type ScheduleFilter } from './components/schedule-filter-bar'
+import { ScheduleWeeklyView } from './components/schedule-weekly-view'
+
+const INITIAL_FILTER: ScheduleFilter = {
+  dormitoryId: undefined,
+  classId: undefined,
+  dormitory: undefined,
+  classroom: undefined,
+}
 
 export function Schedules() {
+  const [filter, setFilter] = useState<ScheduleFilter>(INITIAL_FILTER)
+
   return (
     <>
       <Header fixed>
@@ -14,30 +28,27 @@ export function Schedules() {
         <ProfileDropdown />
       </Header>
 
-      <Main>
-        <div className='mb-2 flex flex-wrap items-center justify-between space-y-2'>
-          <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Schedules</h2>
-            <p className='text-muted-foreground'>
-              Manage class schedules and time slots.
-            </p>
+      <Main className='flex flex-1 flex-col gap-5'>
+        {/* Page title */}
+        <div>
+          <h2 className='text-2xl font-bold tracking-tight'>Schedules</h2>
+          <p className='text-muted-foreground'>
+            Manage weekly class schedules across dormitories.
+          </p>
+        </div>
+
+        {/* Top bar: context (left) + filter (right) */}
+        <div className='flex flex-wrap items-start justify-between gap-4'>
+          <div className='min-w-56 flex-1 max-w-xs'>
+            <ScheduleContextBanner filter={filter} />
+          </div>
+          <div className='flex flex-col items-end gap-2'>
+            <ScheduleFilterBar value={filter} onChange={setFilter} />
           </div>
         </div>
 
-        <div className='flex flex-1 items-center justify-center rounded-lg border border-dashed p-12'>
-          <div className='flex flex-col items-center gap-3 text-center'>
-            <div className='flex h-16 w-16 items-center justify-center rounded-full bg-muted'>
-              <CalendarDays className='h-8 w-8 text-muted-foreground' />
-            </div>
-            <div>
-              <h3 className='text-lg font-semibold'>Schedules — Coming Soon</h3>
-              <p className='mt-1 text-sm text-muted-foreground'>
-                This feature is under construction.
-              </p>
-            </div>
-            <Construction className='h-5 w-5 text-muted-foreground' />
-          </div>
-        </div>
+        {/* Weekly view */}
+        <ScheduleWeeklyView filter={filter} />
       </Main>
     </>
   )

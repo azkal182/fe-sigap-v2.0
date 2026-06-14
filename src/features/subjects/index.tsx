@@ -1,11 +1,25 @@
+'use client'
+
+import { useState } from 'react'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { BookMarked, Construction } from 'lucide-react'
+import { SubjectContextBanner } from './components/subject-context-banner'
+import { SubjectFilterBar, type SubjectFilter } from './components/subject-filter-bar'
+import { SubjectListCard } from './components/subject-list-card'
+
+const INITIAL_FILTER: SubjectFilter = {
+  dormitoryId: undefined,
+  trackId: undefined,
+  dormitory: undefined,
+  track: undefined,
+}
 
 export function Subjects() {
+  const [filter, setFilter] = useState<SubjectFilter>(INITIAL_FILTER)
+
   return (
     <>
       <Header fixed>
@@ -14,30 +28,30 @@ export function Subjects() {
         <ProfileDropdown />
       </Header>
 
-      <Main>
-        <div className='mb-2 flex flex-wrap items-center justify-between space-y-2'>
-          <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Subjects</h2>
-            <p className='text-muted-foreground'>
-              Manage subjects linked to tracks.
-            </p>
+      <Main className='flex flex-1 flex-col gap-5'>
+        {/* Page title */}
+        <div>
+          <h2 className='text-2xl font-bold tracking-tight'>Subjects</h2>
+          <p className='text-muted-foreground'>
+            Manage subjects linked to tracks and dormitories.
+          </p>
+        </div>
+
+        {/* Top bar: context (left) + filter (right) */}
+        <div className='flex flex-wrap items-start justify-between gap-4'>
+          <div className='min-w-56 flex-1 max-w-xs'>
+            <SubjectContextBanner filter={filter} />
+          </div>
+          <div className='flex flex-col items-end gap-2'>
+            <SubjectFilterBar
+              value={filter}
+              onChange={(f) => setFilter(f)}
+            />
           </div>
         </div>
 
-        <div className='flex flex-1 items-center justify-center rounded-lg border border-dashed p-12'>
-          <div className='flex flex-col items-center gap-3 text-center'>
-            <div className='flex h-16 w-16 items-center justify-center rounded-full bg-muted'>
-              <BookMarked className='h-8 w-8 text-muted-foreground' />
-            </div>
-            <div>
-              <h3 className='text-lg font-semibold'>Subjects — Coming Soon</h3>
-              <p className='mt-1 text-sm text-muted-foreground'>
-                This feature is under construction.
-              </p>
-            </div>
-            <Construction className='h-5 w-5 text-muted-foreground' />
-          </div>
-        </div>
+        {/* Subject list */}
+        <SubjectListCard filter={filter} />
       </Main>
     </>
   )

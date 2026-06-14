@@ -1031,18 +1031,18 @@ Behavior update `level`:
 
 #### Parameters
 
-| Name        | In    | Required | Type    | Description            |
-| ----------- | ----- | -------- | ------- | ---------------------- |
-| page        | query | No       | number  |                        |
-| limit       | query | No       | number  |                        |
-| sortBy      | query | No       | string  |                        |
-| sortOrder   | query | No       | string  |                        |
-| search      | query | No       | string  | Generic text search    |
-| dormitoryId | query | No       | string  | Filter by dormitory ID |
-| trackId     | query | No       | string  | Filter by track ID     |
-| teacherId   | query | No       | string  | Filter by teacher ID   |
-| active      | query | No       | boolean | Filter by active flag  |
-| includeDetails | query | No    | boolean | Include `track`, `dormitory`, `activeStudentCount`, `scheduleCount` |
+| Name           | In    | Required | Type    | Description                                                         |
+| -------------- | ----- | -------- | ------- | ------------------------------------------------------------------- |
+| page           | query | No       | number  |                                                                     |
+| limit          | query | No       | number  |                                                                     |
+| sortBy         | query | No       | string  |                                                                     |
+| sortOrder      | query | No       | string  |                                                                     |
+| search         | query | No       | string  | Generic text search                                                 |
+| dormitoryId    | query | No       | string  | Filter by dormitory ID                                              |
+| trackId        | query | No       | string  | Filter by track ID                                                  |
+| teacherId      | query | No       | string  | Filter by teacher ID                                                |
+| active         | query | No       | boolean | Filter by active flag                                               |
+| includeDetails | query | No       | boolean | Include `track`, `dormitory`, `activeStudentCount`, `scheduleCount` |
 
 #### Responses
 
@@ -1146,15 +1146,16 @@ Behavior update `level`:
 
 #### Parameters
 
-| Name        | In    | Required | Type   | Description                        |
-| ----------- | ----- | -------- | ------ | ---------------------------------- |
-| page        | query | No       | number |                                    |
-| limit       | query | No       | number |                                    |
-| sortBy      | query | No       | string |                                    |
-| sortOrder   | query | No       | string |                                    |
-| search      | query | No       | string | Generic text search                |
-| trackId     | query | No       | string | Filter by track ID                 |
-| dormitoryId | query | No       | string | Filter by dormitory ID via `track` |
+| Name           | In    | Required | Type    | Description                                   |
+| -------------- | ----- | -------- | ------- | --------------------------------------------- |
+| page           | query | No       | number  |                                               |
+| limit          | query | No       | number  |                                               |
+| sortBy         | query | No       | string  |                                               |
+| sortOrder      | query | No       | string  |                                               |
+| search         | query | No       | string  | Generic text search                           |
+| trackId        | query | No       | string  | Filter by track ID                            |
+| dormitoryId    | query | No       | string  | Filter by dormitory ID via `track`            |
+| includeDetails | query | No       | boolean | Include `track` and `track.dormitory` objects |
 
 #### Responses
 
@@ -1365,20 +1366,21 @@ Behavior update `level`:
 
 #### Parameters
 
-| Name           | In    | Required | Type    | Description                    |
-| -------------- | ----- | -------- | ------- | ------------------------------ |
-| page           | query | No       | number  |                                |
-| limit          | query | No       | number  |                                |
-| sortBy         | query | No       | string  | `createdAt` \| `updatedAt` etc |
-| sortOrder      | query | No       | string  | `asc` \| `desc`                |
-| classId        | query | No       | string  | Filter by class ID             |
-| subjectId      | query | No       | string  | Filter by subject ID           |
-| teacherId      | query | No       | string  | Filter by teacher ID           |
-| scheduleSlotId | query | No       | string  | Filter by schedule slot ID     |
-| dayOfWeek      | query | No       | number  | 0..6                           |
-| active         | query | No       | boolean | Filter active/inactive         |
-| validFromFrom  | query | No       | string  | ISO date-time lower bound      |
-| validFromTo    | query | No       | string  | ISO date-time upper bound      |
+| Name           | In    | Required | Type    | Description                                                   |
+| -------------- | ----- | -------- | ------- | ------------------------------------------------------------- |
+| page           | query | No       | number  |                                                               |
+| limit          | query | No       | number  |                                                               |
+| sortBy         | query | No       | string  | `createdAt` \| `updatedAt` etc                                |
+| sortOrder      | query | No       | string  | `asc` \| `desc`                                               |
+| classId        | query | No       | string  | Filter by class ID                                            |
+| subjectId      | query | No       | string  | Filter by subject ID                                          |
+| teacherId      | query | No       | string  | Filter by teacher ID                                          |
+| scheduleSlotId | query | No       | string  | Filter by schedule slot ID                                    |
+| dormitoryId    | query | No       | string  | Filter by classroom dormitory ID                              |
+| dayOfWeek      | query | No       | number  | 0..6                                                          |
+| active         | query | No       | boolean | Filter active/inactive                                        |
+| validFromFrom  | query | No       | string  | ISO date-time lower bound                                     |
+| validFromTo    | query | No       | string  | ISO date-time upper bound                                     |
 | includeDetails | query | No       | boolean | Include `class`, `subject`, `teacher`, `scheduleSlot` objects |
 
 #### Responses
