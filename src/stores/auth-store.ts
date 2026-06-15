@@ -8,11 +8,23 @@ export interface AuthUser {
   id: string
   email: string
   name: string
+  isActive?: boolean
   role?: {
+    id: string | null
+    name: string | null
+    isSystem?: boolean | null
+  }
+  permissions?: string[]
+  /** Linked teacher profile (present if user is a teacher) */
+  teacher?: { id: string }
+  /** Dormitory scope IDs — empty array means access to all scopes */
+  dormitoryScopeIds?: string[]
+  dormitoryScopes?: Array<{
     id: string
     name: string
-  }
-  permissions?: string[] // Optional, depending on /auth/me payload
+    level: number
+    gender: 'PUTRA' | 'PUTRI'
+  }>
 }
 
 interface AuthState {

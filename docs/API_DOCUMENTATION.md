@@ -92,6 +92,12 @@ Version: 1.0
 
 **Requires Authentication:** Yes
 
+#### Parameters
+
+| Name          | In    | Required | Type    | Description                                                       |
+| ------------- | ----- | -------- | ------- | ----------------------------------------------------------------- |
+| includeScopes | query | No       | boolean | Include direct resource scopes and dormitory scope detail objects |
+
 #### Responses
 
 - **200**:
@@ -111,6 +117,20 @@ Version: 1.0
   teacher?: {
     id: string;
   };
+  // only when includeScopes=true
+  scopes?: Array<{
+    resource: string;
+    resourceId: string;
+  }>;
+  // only when includeScopes=true
+  dormitoryScopeIds?: string[];
+  // only when includeScopes=true
+  dormitoryScopes?: Array<{
+    id: string;
+    name: string;
+    level: number;
+    gender: 'PUTRA' | 'PUTRI';
+  }>;
   createdAt: string;
   updatedAt: string;
 }

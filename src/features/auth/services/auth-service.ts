@@ -14,7 +14,9 @@ export const authService = {
   },
 
   getProfile: async (): Promise<UserProfileResponse> => {
-    const response = await api.get('/auth/me') as any
+    const response = await api.get('/auth/me', {
+      params: { includeScopes: true },
+    }) as any
     return response.data as UserProfileResponse
   },
 }

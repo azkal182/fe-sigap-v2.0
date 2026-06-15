@@ -58,11 +58,18 @@ export function UserAuthForm({
 
       auth.setTokens(response.accessToken, response.refreshToken)
 
-      // We can also fetch the profile right after or use the returned user object
+      // Fetch full profile (role, permissions, dormitory scopes) from /auth/me
+      const profile = await authService.getProfile()
       auth.setUser({
-        id: response.user.id,
-        email: response.user.email,
-        name: response.user.name,
+        id: profile.id,
+        email: profile.email,
+        name: profile.name,
+        isActive: profile.isActive,
+        role: profile.role,
+        permissions: profile.permissions,
+        teacher: profile.teacher,
+        dormitoryScopeIds: profile.dormitoryScopeIds,
+        dormitoryScopes: profile.dormitoryScopes,
       })
 
       toast.success(`Welcome back, ${response.user.name}!`)

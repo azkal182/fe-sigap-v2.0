@@ -18,9 +18,23 @@ export interface UserProfileResponse {
   id: string
   email: string
   name: string
-  role?: {
+  isActive: boolean
+  role: {
+    id: string | null
+    name: string | null
+    isSystem: boolean | null
+  }
+  permissions: string[]
+  teacher?: { id: string }
+  /** Only present when includeScopes=true */
+  scopes?: Array<{ resource: string; resourceId: string }>
+  dormitoryScopeIds?: string[]
+  dormitoryScopes?: Array<{
     id: string
     name: string
-  }
-  permissions?: string[]
+    level: number
+    gender: 'PUTRA' | 'PUTRI'
+  }>
+  createdAt: string
+  updatedAt: string
 }

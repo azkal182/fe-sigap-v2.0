@@ -32,18 +32,33 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
 
-    // Handle 401 Unauthorized globally
+    // Handle 401 Unauthorized: attempt token refresh once
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // Avoid infinite loops
       originalRequest._retry = true
-      
-      // If unauthorized, clear auth and redirect to login
+
+      const refreshToken = useAuthStore.getState().auth.refreshToken
+
+      if (refreshToken) {
+        try {
+          // Use a plain axios call (not `api`) to avoid infinite interceptor loop
+          const { default: axios } = await import('axios')
+          const baseURL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/v1`
+          const res = await axios.post(`${baseURL}/auth/refresh`, { refreshToken })
+          const { accessToken: newAccess, refreshToken: newRefresh } = res.data?.data ?? res.data
+
+          useAuthStore.getState().auth.setTokens(newAccess, newRefresh ?? refreshToken)
+
+          // Retry the original request with the new token
+          originalRequest.headers.Authorization = `Bearer ${newAccess}`
+          return api(originalRequest)
+        } catch {
+          // Refresh failed — clear session and redirect
+        }
+      }
+
       useAuthStore.getState().auth.reset()
       toast.error('Session expired. Please login again.')
-      
-      // Redirect to login (assuming window.location for simplicity, or we can use tanstack router)
       window.location.href = '/sign-in'
-      
       return Promise.reject(error)
     }
 
