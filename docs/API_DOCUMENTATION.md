@@ -1915,21 +1915,57 @@ Notes:
 
 #### Parameters
 
-| Name        | In    | Required | Type    | Description                        |
-| ----------- | ----- | -------- | ------- | ---------------------------------- |
-| page        | query | No       | number  |                                    |
-| limit       | query | No       | number  |                                    |
-| sortBy      | query | No       | string  |                                    |
-| sortOrder   | query | No       | string  |                                    |
-| search      | query | No       | string  | Generic text search                |
-| userId      | query | No       | string  | Filter by linked user ID           |
-| dormitoryId | query | No       | string  | Filter by assigned dormitory ID    |
-| hasUser     | query | No       | boolean | Filter by linked-user availability |
-| isActive    | query | No       | boolean | Filter by active status            |
+| Name           | In    | Required | Type    | Description                                              |
+| -------------- | ----- | -------- | ------- | -------------------------------------------------------- |
+| page           | query | No       | number  |                                                          |
+| limit          | query | No       | number  |                                                          |
+| sortBy         | query | No       | string  |                                                          |
+| sortOrder      | query | No       | string  |                                                          |
+| search         | query | No       | string  | Generic text search                                      |
+| userId         | query | No       | string  | Filter by linked user ID                                 |
+| dormitoryId    | query | No       | string  | Filter by assigned dormitory ID                          |
+| hasUser        | query | No       | boolean | Filter by linked-user availability                       |
+| isActive       | query | No       | boolean | Filter by active status                                  |
+| includeDetails | query | No       | boolean | Include linked `user` and assigned `dormitories` objects |
 
 #### Responses
 
 - **200**:
+
+```typescript
+{
+  data: Array<{
+    id: string;
+    name: string;
+    phone: string | null;
+    userId: string | null;
+    dormitoryIds: string[];
+    isActive: boolean;
+    // only when includeDetails=true
+    user?: {
+      id: string;
+      email: string;
+      name: string;
+      isActive: boolean;
+    } | null;
+    // only when includeDetails=true
+    dormitories?: Array<{
+      id: string;
+      name: string;
+      level: number;
+      gender: 'PUTRA' | 'PUTRI';
+    }>;
+    createdAt: string;
+    updatedAt: string;
+  }>;
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  }
+}
+```
 
 ---
 

@@ -48,6 +48,8 @@ export interface TeacherListParams {
   dormitoryId?: string
   hasUser?: boolean
   isActive?: boolean
+  /** Include linked `user` and assigned `dormitories` objects in response */
+  includeDetails?: boolean
 }
 
 export interface CreateTeacherDto {
