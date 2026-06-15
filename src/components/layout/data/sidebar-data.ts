@@ -80,6 +80,11 @@ export const sidebarData: SidebarData = {
           url: '/students',
           icon: GraduationCap,
         },
+        {
+          title: 'Teachers',
+          url: '/teachers',
+          icon: UserCog,
+        },
       ],
     },
     {
