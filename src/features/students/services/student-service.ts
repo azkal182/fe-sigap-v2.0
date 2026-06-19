@@ -42,6 +42,7 @@ export interface PaginationParams {
   gender?: StudentGender
   status?: StudentStatus
   dormitoryId?: string
+  includes?: string
 }
 
 export interface PaginatedResponse<T> {

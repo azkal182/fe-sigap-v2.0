@@ -7,11 +7,13 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { useStudents } from './hooks/use-students'
 import { StudentsDialogs } from './components/students-dialogs'
-import { StudentsProvider } from './components/students-provider'
+import {
+  StudentsProvider,
+  useStudentsContext,
+} from './components/students-provider'
 import { StudentsTable } from './components/students-table'
-import { useStudentsContext } from './components/students-provider'
+import { useStudents } from './hooks/use-students'
 
 const route = getRouteApi('/_authenticated/students/')
 
@@ -25,8 +27,10 @@ function StudentsPageContent() {
     limit: search.pageSize || 10,
     search: search.search || undefined,
     gender: (search.gender as 'PUTRA' | 'PUTRI') || undefined,
-    status: (search.status as 'ACTIVE' | 'TRANSFERRED' | 'GRADUATED') || undefined,
+    status:
+      (search.status as 'ACTIVE' | 'TRANSFERRED' | 'GRADUATED') || undefined,
     dormitoryId: search.dormitoryId || undefined,
+    includes: 'dormitory',
   })
 
   return (

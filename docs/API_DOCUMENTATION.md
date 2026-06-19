@@ -17,6 +17,7 @@ Version: 1.0
 ```typescript
 {
   email: string;
+  username?: string;
   password: string;
   name: string;
   roleId: string;
@@ -29,7 +30,7 @@ Version: 1.0
 
 ---
 
-### Login with email and password
+### Login with email, username, or identifier and password
 
 **Method:** `POST`
 
@@ -39,7 +40,9 @@ Version: 1.0
 
 ```typescript
 {
-  email: string;
+  email?: string;
+  username?: string;
+  identifier?: string; // email or username fallback
   password: string;
 }
 ```
@@ -106,6 +109,7 @@ Version: 1.0
 {
   id: string;
   email: string;
+  username: string | null;
   name: string;
   isActive: boolean;
   role: {
@@ -153,6 +157,7 @@ Version: 1.0
 ```typescript
 {
   email: string;
+  username?: string | null;
   password: string;
   name: string;
   roleId: string;
@@ -194,6 +199,7 @@ Version: 1.0
   data: Array<{
     id: string;
     email: string;
+    username: string | null;
     name: string;
     isActive: boolean;
     roleId: string;
@@ -264,6 +270,7 @@ Version: 1.0
 ```typescript
 {
   email?: string;
+  username?: string | null;
   password?: string;
   name?: string;
   roleId?: string;
@@ -751,6 +758,63 @@ Version: 1.0
 #### Responses
 
 - **200**:
+
+---
+
+## Audit Logs
+
+### List audit logs
+
+**Method:** `GET`
+
+**Endpoint:** `/audit-logs`
+
+**Requires Authentication:** Yes (`audit-log:read`)
+
+#### Parameters
+
+| Name        | In    | Required | Type   | Description                            |
+| ----------- | ----- | -------- | ------ | -------------------------------------- |
+| page        | query | No       | number |                                        |
+| limit       | query | No       | number |                                        |
+| sortBy      | query | No       | string | `createdAt`, `action`, `resource`, etc |
+| sortOrder   | query | No       | string | `asc` \| `desc`                        |
+| actorUserId | query | No       | string | Filter by actor user ID                |
+| action      | query | No       | string | `create` \| `update` \| `delete`       |
+| resource    | query | No       | string | Filter by resource name                |
+| resourceId  | query | No       | string | Filter by resource ID                  |
+| traceId     | query | No       | string | Filter by request trace ID             |
+| createdFrom | query | No       | string | ISO date-time lower bound              |
+| createdTo   | query | No       | string | ISO date-time upper bound              |
+
+#### Responses
+
+- **200**:
+
+```typescript
+{
+  data: Array<{
+    id: string;
+    actorUserId: string;
+    action: string;
+    resource: string;
+    resourceId: string | null;
+    before: object | null;
+    after: object | null;
+    traceId: string | null;
+    createdAt: string;
+  }>;
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  }
+}
+```
+
+Sensitive keys such as `password`, `token`, `accessToken`, `refreshToken`, and
+`authorization` are redacted when audit log JSON is returned.
 
 ---
 
@@ -1499,6 +1563,75 @@ Notes:
 
 ---
 
+## Permits
+
+### Create student permit
+
+**Method:** `POST`
+
+**Endpoint:** `/permits`
+
+**Requires Authentication:** Yes
+
+#### Request Body
+
+```typescript
+{
+  studentId: string;
+  startDate: string; // ISO date-time, timezone-aware
+  endDate?: string; // ISO date-time, timezone-aware
+  allowedSlots?: number[]; // [] or omitted means all schedule slots
+  reason: string;
+  type: 'SICK' | 'PERMIT';
+}
+```
+
+#### Responses
+
+- **201**:
+- **422**: invalid period or duplicate/invalid `allowedSlots`
+
+---
+
+### List student permits
+
+**Method:** `GET`
+
+**Endpoint:** `/permits`
+
+**Requires Authentication:** Yes
+
+#### Parameters
+
+| Name            | In    | Required | Type    | Description                                      |
+| --------------- | ----- | -------- | ------- | ------------------------------------------------ |
+| page            | query | No       | number  |                                                  |
+| limit           | query | No       | number  |                                                  |
+| sortBy          | query | No       | string  | `createdAt`, `updatedAt`, `startDate`, `endDate` |
+| sortOrder       | query | No       | string  | `asc` \| `desc`                                  |
+| studentId       | query | No       | string  | Filter by student ID                             |
+| type            | query | No       | string  | `SICK` \| `PERMIT`                               |
+| createdByUserId | query | No       | string  | Filter by creator user ID                        |
+| startDateFrom   | query | No       | string  | ISO date-time lower bound                        |
+| startDateTo     | query | No       | string  | ISO date-time upper bound                        |
+| endDateFrom     | query | No       | string  | ISO date-time lower bound                        |
+| endDateTo       | query | No       | string  | ISO date-time upper bound                        |
+| includeDetails  | query | No       | boolean | Include `student` and `createdBy`                |
+
+#### Responses
+
+- **200**:
+
+---
+
+### Find / Update / Delete student permit
+
+- `GET /permits/{id}` (`permit:read`)
+- `PATCH /permits/{id}` (`permit:update`)
+- `DELETE /permits/{id}` (`permit:delete`)
+
+---
+
 ## Absences
 
 ### Create absence record
@@ -1592,6 +1725,114 @@ Notes:
 - **200**:
 - **422**: when `absentDate` is not today in `Asia/Jakarta`
 
+When no absence row exists yet, active permits can be returned as default item
+values:
+
+```typescript
+{
+  items: Array<{
+    studentId: string;
+    studentName: string;
+    studentNis: string;
+    status: 'PRESENT' | 'SICK' | 'PERMIT' | 'ABSENT';
+    note: string | null;
+    absenceId: string | null;
+    source: 'absence' | 'permit' | 'default';
+    permit: {
+      id: string;
+      type: 'SICK' | 'PERMIT';
+      reason: string;
+      startDate: string;
+      endDate: string | null;
+      allowedSlots: number[];
+    } | null;
+  }>;
+}
+```
+
+---
+
+### Get current teacher absence session
+
+**Method:** `GET`
+
+**Endpoint:** `/absences/my-current-session`
+
+**Requires Authentication:** Yes
+
+Backend resolves the active session from the logged-in user's linked teacher,
+current `Asia/Jakarta` time, today's day of week, and active schedule slot.
+
+#### Parameters
+
+| Name       | In    | Required | Type   | Description                                                                    |
+| ---------- | ----- | -------- | ------ | ------------------------------------------------------------------------------ |
+| absentDate | query | No       | string | Defaults to today in `Asia/Jakarta`; when provided, must be today `YYYY-MM-DD` |
+
+#### Responses
+
+- **200**:
+
+```typescript
+{
+  activeSession: {
+    absentDate: string;
+    currentTime: string; // HH:mm Asia/Jakarta
+    dayOfWeek: number;
+    schedule: {
+      id: string;
+      dayOfWeek: number;
+    };
+    class: {
+      id: string;
+      name: string;
+    };
+    dormitory: {
+      id: string;
+      name: string | null;
+      level: number | null;
+      gender: string | null;
+    };
+    track: {
+      id: string;
+      name: string | null;
+      level: number | null;
+    };
+    subject: {
+      id: string;
+      name: string;
+    };
+    teacher: {
+      id: string;
+      name: string;
+    };
+    scheduleSlot: {
+      id: string;
+      slot: number;
+      startTime: string;
+      endTime: string;
+    };
+    items: Array<{
+      studentId: string;
+      studentName: string;
+      studentNis: string;
+      status: 'PRESENT' | 'SICK' | 'PERMIT' | 'ABSENT';
+      note: string | null;
+      absenceId: string | null;
+    }>;
+  } | null;
+  reason?: string;
+  absentDate?: string;
+  currentTime?: string;
+  dayOfWeek?: number;
+}
+```
+
+- **403**: when logged-in user is not linked to an active teacher
+- **422**: when `absentDate` is not today or teacher has conflicting active schedules at the current time
+
+Submit/update the returned session through `PUT /absences/classroom-daily`.
+
 ---
 
 ### Update absence
@@ -1661,6 +1902,153 @@ Notes:
 
 - **200**:
 - **422**: when `absentDate` is not today or student not in active class roster
+
+---
+
+## Teacher Attendances
+
+### Create teacher attendance record
+
+**Method:** `POST`
+
+**Endpoint:** `/teacher-attendances`
+
+**Requires Authentication:** Yes
+
+#### Request Body
+
+```typescript
+{
+  teacherId: string;
+  scheduleId: string;
+  attendDate: string; // YYYY-MM-DD
+  status: 'PRESENT' | 'SICK' | 'PERMIT' | 'ABSENT';
+  note?: string;
+}
+```
+
+#### Responses
+
+- **201**:
+- **409**: duplicate attendance for same `teacherId + scheduleId + attendDate`
+- **422**: teacher does not match schedule teacher
+
+---
+
+### List teacher attendances
+
+**Method:** `GET`
+
+**Endpoint:** `/teacher-attendances`
+
+**Requires Authentication:** Yes
+
+#### Parameters
+
+| Name           | In    | Required | Type    | Description                                  |
+| -------------- | ----- | -------- | ------- | -------------------------------------------- |
+| page           | query | No       | number  |                                              |
+| limit          | query | No       | number  |                                              |
+| sortBy         | query | No       | string  | `createdAt`, `updatedAt`, `attendDate`       |
+| sortOrder      | query | No       | string  | `asc` \| `desc`                              |
+| teacherId      | query | No       | string  | Filter by teacher ID                         |
+| scheduleId     | query | No       | string  | Filter by schedule ID                        |
+| status         | query | No       | string  | Filter by attendance status                  |
+| attendDateFrom | query | No       | string  | YYYY-MM-DD lower bound                       |
+| attendDateTo   | query | No       | string  | YYYY-MM-DD upper bound                       |
+| dormitoryId    | query | No       | string  | Filter by schedule classroom dormitory       |
+| scheduleSlotId | query | No       | string  | Filter by schedule slot                      |
+| includeDetails | query | No       | boolean | Include `teacher` and `schedule` detail data |
+
+#### Responses
+
+- **200**:
+
+---
+
+### Get daily teacher attendance roster
+
+**Method:** `GET`
+
+**Endpoint:** `/teacher-attendances/daily`
+
+**Requires Authentication:** Yes
+
+#### Parameters
+
+| Name           | In    | Required | Type   | Description         |
+| -------------- | ----- | -------- | ------ | ------------------- |
+| dormitoryId    | query | Yes      | string | Dormitory ID        |
+| scheduleSlotId | query | Yes      | string | Schedule slot ID    |
+| attendDate     | query | Yes      | string | Date (`YYYY-MM-DD`) |
+
+#### Response Shape
+
+```typescript
+{
+  dormitoryId: string;
+  scheduleSlotId: string;
+  attendDate: string;
+  dayOfWeek: number;
+  total: number;
+  items: Array<{
+    teacherId: string;
+    teacherName: string;
+    scheduleId: string;
+    class: { id: string; name: string };
+    subject: { id: string; name: string };
+    scheduleSlot: {
+      id: string;
+      slot: number;
+      startTime: string;
+      endTime: string;
+    };
+    status: 'PRESENT' | 'SICK' | 'PERMIT' | 'ABSENT' | null;
+    note: string | null;
+    teacherAttendanceId: string | null;
+    source: 'attendance' | 'empty';
+  }>;
+}
+```
+
+---
+
+### Batch upsert daily teacher attendance
+
+**Method:** `PUT`
+
+**Endpoint:** `/teacher-attendances/daily`
+
+**Requires Authentication:** Yes
+
+#### Request Body
+
+```typescript
+{
+  dormitoryId: string;
+  scheduleSlotId: string;
+  attendDate: string; // YYYY-MM-DD
+  items: Array<{
+    teacherId: string;
+    scheduleId: string;
+    status: 'PRESENT' | 'SICK' | 'PERMIT' | 'ABSENT';
+    note?: string;
+  }>;
+}
+```
+
+#### Responses
+
+- **200**:
+- **422**: duplicate schedule in payload, schedule not in roster, or teacher mismatch
+
+---
+
+### Find / Update / Delete teacher attendance
+
+- `GET /teacher-attendances/{id}` (`teacher-attendance:read`)
+- `PATCH /teacher-attendances/{id}` (`teacher-attendance:update`)
+- `DELETE /teacher-attendances/{id}` (`teacher-attendance:delete`)
 
 ---
 
@@ -1789,31 +2177,72 @@ Notes:
 
 #### Parameters
 
-| Name         | In    | Required | Type                               | Description                           |
-| ------------ | ----- | -------- | ---------------------------------- | ------------------------------------- |
-| page         | query | No       | number                             |                                       |
-| limit        | query | No       | number                             |                                       |
-| sortBy       | query | No       | string                             |                                       |
-| sortOrder    | query | No       | string                             |                                       |
-| search       | query | No       | string                             | Generic text search                   |
-| nis          | query | No       | string                             | Filter by NIS                         |
-| name         | query | No       | string                             | Filter by student name                |
-| placeOfBirth | query | No       | string                             | Filter by place of birth              |
-| dormitoryId  | query | No       | string                             | Filter by dormitory ID                |
-| gender       | query | No       | PUTRA \| PUTRI                     | Filter by gender                      |
-| status       | query | No       | ACTIVE \| TRANSFERRED \| GRADUATED | Filter by student status              |
-| fatherName   | query | No       | string                             | Filter by father name                 |
-| motherName   | query | No       | string                             | Filter by mother name                 |
-| parentPhone  | query | No       | string                             | Filter by parent phone                |
-| bornFrom     | query | No       | string                             | Birth date lower bound                |
-| bornTo       | query | No       | string                             | Birth date upper bound                |
-| exitFrom     | query | No       | string                             | Exit date lower bound                 |
-| exitTo       | query | No       | string                             | Exit date upper bound                 |
-| hasDormitory | query | No       | boolean                            | Filter by dormitory assignment status |
+| Name         | In    | Required | Type                               | Description                                      |
+| ------------ | ----- | -------- | ---------------------------------- | ------------------------------------------------ |
+| page         | query | No       | number                             |                                                  |
+| limit        | query | No       | number                             |                                                  |
+| sortBy       | query | No       | string                             |                                                  |
+| sortOrder    | query | No       | string                             |                                                  |
+| search       | query | No       | string                             | Generic text search                              |
+| nis          | query | No       | string                             | Filter by NIS                                    |
+| name         | query | No       | string                             | Filter by student name                           |
+| placeOfBirth | query | No       | string                             | Filter by place of birth                         |
+| dormitoryId  | query | No       | string                             | Filter by dormitory ID                           |
+| gender       | query | No       | PUTRA \| PUTRI                     | Filter by gender                                 |
+| status       | query | No       | ACTIVE \| TRANSFERRED \| GRADUATED | Filter by student status                         |
+| fatherName   | query | No       | string                             | Filter by father name                            |
+| motherName   | query | No       | string                             | Filter by mother name                            |
+| parentPhone  | query | No       | string                             | Filter by parent phone                           |
+| bornFrom     | query | No       | string                             | Birth date lower bound                           |
+| bornTo       | query | No       | string                             | Birth date upper bound                           |
+| exitFrom     | query | No       | string                             | Exit date lower bound                            |
+| exitTo       | query | No       | string                             | Exit date upper bound                            |
+| hasDormitory | query | No       | boolean                            | Filter by dormitory assignment status            |
+| includes     | query | No       | string                             | Comma-separated includes. Supported: `dormitory` |
 
 #### Responses
 
 - **200**:
+
+```typescript
+{
+  data: Array<{
+    id: string;
+    nis: string;
+    name: string;
+    placeOfBirth: string;
+    dateOfBirth: string;
+    address: string | null;
+    fatherName: string | null;
+    motherName: string | null;
+    parentPhone: string | null;
+    gender: 'PUTRA' | 'PUTRI';
+    dormitoryId: string | null;
+    status: 'ACTIVE' | 'TRANSFERRED' | 'GRADUATED';
+    exitDate: string | null;
+    exitReason: string | null;
+    exitNotes: string | null;
+    createdAt: string;
+    updatedAt: string;
+    // only when includes contains dormitory
+    dormitory?: {
+      id: string;
+      name: string;
+      level: number;
+      gender: 'PUTRA' | 'PUTRI';
+      isActive: boolean;
+    } | null;
+  }>;
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+  }
+}
+```
 
 ---
 

@@ -21,12 +21,8 @@ import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
 
 const formSchema = z.object({
-  email: z.string().email({
-    message: 'Please enter a valid email.',
-  }),
-  password: z
-    .string()
-    .min(1, 'Please enter your password.'),
+  identifier: z.string().min(1, 'Please enter your email or username.'),
+  password: z.string().min(1, 'Please enter your password.'),
 })
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
@@ -45,7 +41,7 @@ export function UserAuthForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: 'admin@example.com',
+      identifier: 'admin@example.com',
       password: 'Admin@123456',
     },
   })
@@ -94,12 +90,12 @@ export function UserAuthForm({
       >
         <FormField
           control={form.control}
-          name='email'
+          name='identifier'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Email or username</FormLabel>
               <FormControl>
-                <Input placeholder='admin@example.com' {...field} />
+                <Input placeholder='admin@example.com or admin' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

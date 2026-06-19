@@ -31,9 +31,16 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config
+    const requestUrl = originalRequest?.url ?? ''
+    const isAuthLoginRequest = requestUrl.includes('/auth/login')
+    const isAuthMeRequest = requestUrl.includes('/auth/me')
 
     // Handle 401 Unauthorized: attempt token refresh once
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isAuthLoginRequest
+    ) {
       originalRequest._retry = true
 
       const refreshToken = useAuthStore.getState().auth.refreshToken
@@ -64,7 +71,7 @@ api.interceptors.response.use(
 
     // Display error message from backend if available
     const backendMessage = error.response?.data?.message
-    if (backendMessage && !originalRequest.url?.includes('/auth/me')) {
+    if (backendMessage && !isAuthMeRequest && !isAuthLoginRequest) {
       toast.error(backendMessage)
     }
 
