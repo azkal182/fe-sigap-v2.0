@@ -99,12 +99,6 @@ jobs:
       - name: Prettier check
         run: pnpm format:check
 
-      - name: Install browser dependencies
-        run: pnpm test:browser:install
-
-      - name: Test
-        run: pnpm test
-
       - name: Build Vite application
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}

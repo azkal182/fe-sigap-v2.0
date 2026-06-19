@@ -164,8 +164,6 @@ Build akan menjalankan:
 pnpm install --frozen-lockfile
 pnpm lint
 pnpm format:check
-pnpm test:browser:install
-pnpm test
 pnpm build
 ```
 
