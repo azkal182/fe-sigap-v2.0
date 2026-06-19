@@ -1,8 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { Search, Loader2, BookOpen, Users, CheckCircle2, XCircle, GraduationCap, CalendarDays } from 'lucide-react'
-import { Input } from '@/components/ui/input'
+import {
+  Search,
+  Loader2,
+  BookOpen,
+  Users,
+  CheckCircle2,
+  XCircle,
+  GraduationCap,
+  CalendarDays,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import {
   Card,
@@ -11,10 +20,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
+import { Input } from '@/components/ui/input'
 import { useClassrooms } from '../hooks/use-classrooms'
-import type { ClassroomFilter } from './classroom-filter-bar'
 import type { Classroom } from '../services/classroom-service'
+import type { ClassroomFilter } from './classroom-filter-bar'
 
 type ClassroomListCardProps = {
   filter: ClassroomFilter
@@ -22,7 +31,11 @@ type ClassroomListCardProps = {
   onSelect: (classroom: Classroom) => void
 }
 
-export function ClassroomListCard({ filter, selectedId, onSelect }: ClassroomListCardProps) {
+export function ClassroomListCard({
+  filter,
+  selectedId,
+  onSelect,
+}: ClassroomListCardProps) {
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const PAGE_SIZE = 12
@@ -53,7 +66,10 @@ export function ClassroomListCard({ filter, selectedId, onSelect }: ClassroomLis
                 </Badge>
               )}
               {isFetching && !isLoading && (
-                <Loader2 size={13} className='animate-spin text-muted-foreground' />
+                <Loader2
+                  size={13}
+                  className='animate-spin text-muted-foreground'
+                />
               )}
             </CardTitle>
             <CardDescription className='mt-0.5'>
@@ -94,7 +110,9 @@ export function ClassroomListCard({ filter, selectedId, onSelect }: ClassroomLis
             <BookOpen size={40} className='text-muted-foreground/40' />
             <div>
               <p className='text-sm font-medium text-muted-foreground'>
-                {search ? 'No classrooms match your search.' : 'No classrooms found.'}
+                {search
+                  ? 'No classrooms match your search.'
+                  : 'No classrooms found.'}
               </p>
               {!filter.dormitory && (
                 <p className='mt-1 text-xs text-muted-foreground'>
@@ -160,7 +178,7 @@ function ClassroomItem({
     <div
       onClick={onSelect}
       className={cn(
-        'group relative flex flex-col gap-2 rounded-lg border p-4 transition-all cursor-pointer',
+        'group relative flex cursor-pointer flex-col gap-2 rounded-lg border p-4 transition-all',
         isSelected
           ? 'border-primary bg-primary/5 shadow-sm ring-1 ring-primary/30'
           : 'hover:border-primary/40 hover:bg-muted/40',
@@ -177,7 +195,9 @@ function ClassroomItem({
       </div>
 
       {/* Name */}
-      <p className='pe-5 text-sm font-semibold leading-tight'>{classroom.name}</p>
+      <p className='pe-5 text-sm leading-tight font-semibold'>
+        {classroom.name}
+      </p>
 
       {/* Teacher */}
       <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
@@ -186,7 +206,8 @@ function ClassroomItem({
       </div>
 
       {/* Student & schedule counts */}
-      {(classroom.activeStudentCount !== undefined || classroom.scheduleCount !== undefined) && (
+      {(classroom.activeStudentCount !== undefined ||
+        classroom.scheduleCount !== undefined) && (
         <div className='flex items-center gap-2 text-xs text-muted-foreground'>
           {classroom.activeStudentCount !== undefined && (
             <span className='flex items-center gap-1'>

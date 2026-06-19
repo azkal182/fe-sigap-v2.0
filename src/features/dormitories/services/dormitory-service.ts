@@ -1,3 +1,4 @@
+import { apiPaginatedResponse, apiResponse } from '@/lib/api-response'
 import { api } from '@/lib/axios'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -55,20 +56,22 @@ export const dormitoryService = {
   getDormitories: async (
     params?: PaginationParams
   ): Promise<PaginatedResponse<Dormitory>> => {
-    const response = (await api.get('/dormitories', { params })) as any
+    const response = apiPaginatedResponse<Dormitory>(
+      await api.get('/dormitories', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 
   /** GET /dormitories/:id — single dormitory detail (scope-aware) */
   getDormitory: async (id: string): Promise<Dormitory> => {
-    const response = (await api.get(`/dormitories/${id}`)) as any
-    return response.data as Dormitory
+    const response = apiResponse<Dormitory>(await api.get(`/dormitories/${id}`))
+    return response.data
   },
 
   /** POST /dormitories — create new dormitory */
   createDormitory: async (dto: CreateDormitoryDto): Promise<Dormitory> => {
-    const response = (await api.post('/dormitories', dto)) as any
-    return response.data as Dormitory
+    const response = apiResponse<Dormitory>(await api.post('/dormitories', dto))
+    return response.data
   },
 
   /** PATCH /dormitories/:id — update dormitory (name, level, gender, isActive) */
@@ -76,8 +79,10 @@ export const dormitoryService = {
     id: string,
     dto: UpdateDormitoryDto
   ): Promise<Dormitory> => {
-    const response = (await api.patch(`/dormitories/${id}`, dto)) as any
-    return response.data as Dormitory
+    const response = apiResponse<Dormitory>(
+      await api.patch(`/dormitories/${id}`, dto)
+    )
+    return response.data
   },
 
   /** DELETE /dormitories/:id — permanently delete dormitory */

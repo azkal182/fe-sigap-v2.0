@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
+import { getApiErrorMessage } from '@/lib/api-response'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { type Role } from '../services/role-service'
 import { useDeleteRole } from '../hooks/use-roles'
+import { type Role } from '../services/role-service'
 
 type RolesDeleteDialogProps = {
   open: boolean
@@ -31,8 +32,8 @@ export function RolesDeleteDialog({
       await deleteRole.mutateAsync(currentRow.id)
       toast.success(`Role "${currentRow.name}" deleted`)
       onOpenChange(false)
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Failed to delete role')
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, 'Failed to delete role'))
     } finally {
       setValue('')
     }

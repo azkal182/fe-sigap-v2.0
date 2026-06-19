@@ -49,12 +49,15 @@ export function ScheduleDeactivateDialog({
           <AlertDialogTitle>Deactivate Schedule</AlertDialogTitle>
           <AlertDialogDescription>
             Are you sure you want to deactivate{' '}
-            <span className='font-semibold text-foreground'>{label}</span>?{' '}
-            The schedule will be archived (not deleted) and can be reviewed in history.
+            <span className='font-semibold text-foreground'>{label}</span>? The
+            schedule will be archived (not deleted) and can be reviewed in
+            history.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deactivate.isPending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={deactivate.isPending}>
+            Cancel
+          </AlertDialogCancel>
           <Button
             variant='destructive'
             onClick={handleDeactivate}

@@ -6,7 +6,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
-import { authService } from '@/features/auth/services/auth-service'
+import { getApiErrorMessage } from '@/lib/api-response'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
+import { authService } from '@/features/auth/services/auth-service'
 
 const formSchema = z.object({
   identifier: z.string().min(1, 'Please enter your email or username.'),
@@ -72,10 +73,9 @@ export function UserAuthForm({
 
       const targetPath = redirectTo || '/'
       navigate({ to: targetPath, replace: true })
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Error is handled globally by axios interceptor but we can add specific handling here
-      const message = error.response?.data?.message || 'Failed to login'
-      toast.error(message)
+      toast.error(getApiErrorMessage(error, 'Failed to login'))
     } finally {
       setIsLoading(false)
     }

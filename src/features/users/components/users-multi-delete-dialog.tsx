@@ -4,12 +4,13 @@ import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
+import { getApiErrorMessage } from '@/lib/api-response'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { type User } from '../services/user-service'
 import { useBulkDeleteUsers } from '../hooks/use-users'
+import { type User } from '../services/user-service'
 
 type UserMultiDeleteDialogProps<TData> = {
   open: boolean
@@ -45,10 +46,8 @@ export function UsersMultiDeleteDialog<TData>({
       setValue('')
       table.resetRowSelection()
       onOpenChange(false)
-    } catch (err: any) {
-      toast.error(
-        err?.response?.data?.message || 'Failed to delete selected users'
-      )
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, 'Failed to delete selected users'))
     }
   }
 
@@ -87,9 +86,7 @@ export function UsersMultiDeleteDialog<TData>({
           </p>
 
           <Label className='my-4 flex flex-col items-start gap-1.5'>
-            <span>
-              Confirm by typing &ldquo;{CONFIRM_WORD}&rdquo;:
-            </span>
+            <span>Confirm by typing &ldquo;{CONFIRM_WORD}&rdquo;:</span>
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}

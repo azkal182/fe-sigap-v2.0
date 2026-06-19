@@ -7,11 +7,13 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { useDormitories } from './hooks/use-dormitories'
 import { DormitoriesDialogs } from './components/dormitories-dialogs'
-import { DormitoriesProvider } from './components/dormitories-provider'
+import {
+  DormitoriesProvider,
+  useDormitoriesContext,
+} from './components/dormitories-provider'
 import { DormitoriesTable } from './components/dormitories-table'
-import { useDormitoriesContext } from './components/dormitories-provider'
+import { useDormitories } from './hooks/use-dormitories'
 
 const route = getRouteApi('/_authenticated/dormitories/')
 

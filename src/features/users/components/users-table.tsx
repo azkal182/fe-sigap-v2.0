@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Cross2Icon } from '@radix-ui/react-icons'
 import {
   type SortingState,
   type VisibilityState,
@@ -9,9 +10,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Cross2Icon } from '@radix-ui/react-icons'
+import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -20,13 +23,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { DataTablePagination, DataTableFacetedFilter, DataTableViewOptions } from '@/components/data-table'
+import {
+  DataTablePagination,
+  DataTableFacetedFilter,
+  DataTableViewOptions,
+} from '@/components/data-table'
 import { type User } from '../services/user-service'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { usersColumns as columns } from './users-columns'
-import { Loader2 } from 'lucide-react'
 
 type UsersSearchParams = {
   page?: number
@@ -49,7 +53,13 @@ const IS_ACTIVE_OPTIONS = [
   { label: 'Inactive', value: 'false' },
 ]
 
-export function UsersTable({ data, search, navigate, isLoading, totalPages }: DataTableProps) {
+export function UsersTable({
+  data,
+  search,
+  navigate,
+  isLoading,
+  totalPages,
+}: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -189,7 +199,7 @@ export function UsersTable({ data, search, navigate, isLoading, totalPages }: Da
                       className={cn(
                         'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
                         header.column.columnDef.meta?.className,
-                        (header.column.columnDef.meta as any)?.thClassName
+                        header.column.columnDef.meta?.thClassName
                       )}
                     >
                       {header.isPlaceholder
@@ -230,7 +240,7 @@ export function UsersTable({ data, search, navigate, isLoading, totalPages }: Da
                       className={cn(
                         'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
                         cell.column.columnDef.meta?.className,
-                        (cell.column.columnDef.meta as any)?.tdClassName
+                        cell.column.columnDef.meta?.tdClassName
                       )}
                     >
                       {flexRender(

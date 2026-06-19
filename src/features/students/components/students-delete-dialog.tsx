@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
+import { getApiErrorMessage } from '@/lib/api-response'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { type Student } from '../services/student-service'
 import { useDeleteStudent } from '../hooks/use-students'
+import { type Student } from '../services/student-service'
 
 type StudentsDeleteDialogProps = {
   open: boolean
@@ -31,10 +32,8 @@ export function StudentsDeleteDialog({
       await deleteStudent.mutateAsync(currentRow.id)
       toast.success(`Student "${currentRow.name}" deleted`)
       onOpenChange(false)
-    } catch (err: any) {
-      toast.error(
-        err?.response?.data?.message || 'Failed to delete student'
-      )
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, 'Failed to delete student'))
     } finally {
       setValue('')
     }

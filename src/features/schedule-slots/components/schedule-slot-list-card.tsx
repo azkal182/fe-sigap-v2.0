@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { Clock, Plus, Pencil, Trash2, Loader2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -11,6 +11,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -19,26 +28,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useDormitories } from '@/features/users/hooks/use-users'
+import type { Dormitory } from '@/features/users/services/permission-service'
 import { useScheduleSlots } from '../hooks/use-schedule-slots'
+import type { ScheduleSlot } from '../services/schedule-slot-service'
 import { ScheduleSlotActionDialog } from './schedule-slot-action-dialog'
 import { ScheduleSlotDeleteDialog } from './schedule-slot-delete-dialog'
-import type { ScheduleSlot } from '../services/schedule-slot-service'
-import type { Dormitory } from '@/features/users/services/permission-service'
 
 export function ScheduleSlotListCard() {
   // ── Filter state ─────────────────────────────────────────────────────────────
   const [selectedDormitoryId, setSelectedDormitoryId] = useState<string>('')
-  const [selectedDormitory, setSelectedDormitory] = useState<Dormitory | undefined>()
+  const [selectedDormitory, setSelectedDormitory] = useState<
+    Dormitory | undefined
+  >()
   const [page, setPage] = useState(1)
   const PAGE_SIZE = 20
 
@@ -53,7 +55,9 @@ export function ScheduleSlotListCard() {
   }>({ open: false })
 
   // ── Data ─────────────────────────────────────────────────────────────────────
-  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({ limit: 100 })
+  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({
+    limit: 100,
+  })
   const dormitories = dormitoriesData?.data ?? []
 
   const hasFilter = !!selectedDormitoryId
@@ -102,7 +106,10 @@ export function ScheduleSlotListCard() {
                   </Badge>
                 )}
                 {isFetching && !isLoading && (
-                  <Loader2 size={13} className='animate-spin text-muted-foreground' />
+                  <Loader2
+                    size={13}
+                    className='animate-spin text-muted-foreground'
+                  />
                 )}
               </CardTitle>
               <CardDescription className='mt-0.5'>
@@ -116,7 +123,9 @@ export function ScheduleSlotListCard() {
             <div className='flex flex-wrap items-end gap-3'>
               {/* Dormitory filter */}
               <div className='flex flex-col gap-1.5'>
-                <Label className='text-xs text-muted-foreground'>Dormitory</Label>
+                <Label className='text-xs text-muted-foreground'>
+                  Dormitory
+                </Label>
                 {isLoadingDorm ? (
                   <Skeleton className='h-8 w-48' />
                 ) : (
@@ -186,7 +195,9 @@ export function ScheduleSlotListCard() {
               <Table>
                 <TableHeader>
                   <TableRow className='hover:bg-transparent'>
-                    <TableHead className='w-16 ps-6 text-center'>Slot #</TableHead>
+                    <TableHead className='w-16 ps-6 text-center'>
+                      Slot #
+                    </TableHead>
                     <TableHead className='w-36'>Start Time</TableHead>
                     <TableHead className='w-36'>End Time</TableHead>
                     <TableHead>Duration</TableHead>
@@ -205,18 +216,31 @@ export function ScheduleSlotListCard() {
                         </TableCell>
                         <TableCell>
                           <div className='flex items-center gap-1.5'>
-                            <Clock size={12} className='shrink-0 text-muted-foreground' />
-                            <span className='font-mono text-sm'>{s.startTime}</span>
+                            <Clock
+                              size={12}
+                              className='shrink-0 text-muted-foreground'
+                            />
+                            <span className='font-mono text-sm'>
+                              {s.startTime}
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell>
                           <div className='flex items-center gap-1.5'>
-                            <Clock size={12} className='shrink-0 text-muted-foreground' />
-                            <span className='font-mono text-sm'>{s.endTime}</span>
+                            <Clock
+                              size={12}
+                              className='shrink-0 text-muted-foreground'
+                            />
+                            <span className='font-mono text-sm'>
+                              {s.endTime}
+                            </span>
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant='outline' className='font-mono text-xs'>
+                          <Badge
+                            variant='outline'
+                            className='font-mono text-xs'
+                          >
                             {duration}
                           </Badge>
                         </TableCell>
@@ -226,7 +250,9 @@ export function ScheduleSlotListCard() {
                               size='icon'
                               variant='ghost'
                               className='h-7 w-7'
-                              onClick={() => setActionDialog({ open: true, slot: s })}
+                              onClick={() =>
+                                setActionDialog({ open: true, slot: s })
+                              }
                             >
                               <Pencil size={13} />
                             </Button>
@@ -234,7 +260,9 @@ export function ScheduleSlotListCard() {
                               size='icon'
                               variant='ghost'
                               className='h-7 w-7 text-destructive hover:text-destructive'
-                              onClick={() => setDeleteDialog({ open: true, slot: s })}
+                              onClick={() =>
+                                setDeleteDialog({ open: true, slot: s })
+                              }
                             >
                               <Trash2 size={13} />
                             </Button>
@@ -251,7 +279,8 @@ export function ScheduleSlotListCard() {
                 <div className='flex items-center justify-between border-t px-6 py-3'>
                   <p className='text-xs text-muted-foreground'>
                     Showing {(page - 1) * PAGE_SIZE + 1}–
-                    {Math.min(page * PAGE_SIZE, meta?.total ?? 0)} of {meta?.total}
+                    {Math.min(page * PAGE_SIZE, meta?.total ?? 0)} of{' '}
+                    {meta?.total}
                   </p>
                   <div className='flex items-center gap-1.5'>
                     <Button
@@ -307,7 +336,7 @@ export function ScheduleSlotListCard() {
 function calcDuration(start: string, end: string): string {
   const [sh, sm] = start.split(':').map(Number)
   const [eh, em] = end.split(':').map(Number)
-  const totalMinutes = (eh * 60 + em) - (sh * 60 + sm)
+  const totalMinutes = eh * 60 + em - (sh * 60 + sm)
   if (totalMinutes <= 0) return '—'
   const h = Math.floor(totalMinutes / 60)
   const m = totalMinutes % 60
@@ -322,7 +351,10 @@ function SlotTableSkeleton() {
   return (
     <div className='animate-pulse'>
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className='flex items-center gap-4 border-b px-6 py-3 last:border-0'>
+        <div
+          key={i}
+          className='flex items-center gap-4 border-b px-6 py-3 last:border-0'
+        >
           <div className='h-6 w-6 rounded-md bg-muted' />
           <div className='h-4 w-16 rounded bg-muted' />
           <div className='h-4 w-16 rounded bg-muted' />

@@ -34,7 +34,9 @@ export const dormitoriesColumns: ColumnDef<Dormitory>[] = [
         className='translate-y-0.5'
       />
     ),
-    meta: { className: cn('inset-s-0 z-10 rounded-tl-[inherit] max-md:sticky') },
+    meta: {
+      className: cn('inset-s-0 z-10 rounded-tl-[inherit] max-md:sticky'),
+    },
     enableSorting: false,
     enableHiding: false,
   },

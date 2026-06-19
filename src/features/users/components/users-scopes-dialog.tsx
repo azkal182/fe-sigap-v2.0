@@ -3,7 +3,9 @@
 import { useMemo } from 'react'
 import { Building, Layers, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { getApiErrorMessage } from '@/lib/api-response'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
@@ -13,16 +15,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { type User } from '../services/user-service'
 import {
   useDormitories,
   useUserScopes,
   useAssignUserScopes,
   useRemoveUserScopes,
 } from '../hooks/use-users'
+import { type User } from '../services/user-service'
 
 type UsersScopesDialogProps = {
   open: boolean
@@ -45,11 +46,16 @@ export function UsersScopesDialog({
     limit: 100,
     isActive: true,
   })
-  const dormitories = dormitoriesRes?.data ?? []
+  const dormitories = useMemo(
+    () => dormitoriesRes?.data ?? [],
+    [dormitoriesRes]
+  )
 
   // Fetch fresh scopes via GET /users/:id/scopes
   // API returns: [{ resource: "dormitory", resourceId: "id1" }, { resource: "dormitory", resourceId: "id2" }, ...]
-  const { data: scopes, isLoading: isLoadingScopes } = useUserScopes(currentRow.id)
+  const { data: scopes, isLoading: isLoadingScopes } = useUserScopes(
+    currentRow.id
+  )
 
   const assignMutation = useAssignUserScopes()
   const removeMutation = useRemoveUserScopes()
@@ -84,9 +90,9 @@ export function UsersScopesDialog({
           dto: { resource: 'dormitory', resourceIds: [dormitoryId] },
         })
         toast.success('Dormitory scope assigned')
-      } catch (err: any) {
+      } catch (error: unknown) {
         toast.error(
-          err?.response?.data?.message || 'Failed to assign dormitory scope'
+          getApiErrorMessage(error, 'Failed to assign dormitory scope')
         )
       }
     } else {
@@ -96,9 +102,9 @@ export function UsersScopesDialog({
           dto: { resource: 'dormitory', resourceIds: [dormitoryId] },
         })
         toast.success('Dormitory scope removed')
-      } catch (err: any) {
+      } catch (error: unknown) {
         toast.error(
-          err?.response?.data?.message || 'Failed to remove dormitory scope'
+          getApiErrorMessage(error, 'Failed to remove dormitory scope')
         )
       }
     }
@@ -157,7 +163,7 @@ export function UsersScopesDialog({
               <div key={gender} className='mb-3'>
                 <div className='mb-1 flex items-center gap-1.5'>
                   <Building size={12} className='text-muted-foreground' />
-                  <p className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
+                  <p className='text-xs font-semibold tracking-wide text-muted-foreground uppercase'>
                     {GENDER_LABEL[gender] ?? gender}
                   </p>
                 </div>

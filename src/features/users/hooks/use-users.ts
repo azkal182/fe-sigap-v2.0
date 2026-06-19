@@ -1,12 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  userService,
-  roleService,
-  type PaginationParams,
-  type CreateUserDto,
-  type UpdateUserDto,
-} from '../services/user-service'
-import {
   permissionService,
   scopeService,
   dormitoryService,
@@ -14,6 +7,13 @@ import {
   type AssignScopesDto,
   type RemoveScopesDto,
 } from '../services/permission-service'
+import {
+  userService,
+  roleService,
+  type PaginationParams,
+  type CreateUserDto,
+  type UpdateUserDto,
+} from '../services/user-service'
 
 // ─── User Queries & Mutations ─────────────────────────────────────────────────
 
@@ -66,13 +66,8 @@ export function useDeleteUser() {
 export function useBulkUpdateUsers() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({
-      ids,
-      data,
-    }: {
-      ids: string[]
-      data: UpdateUserDto
-    }) => Promise.all(ids.map((id) => userService.updateUser(id, data))),
+    mutationFn: ({ ids, data }: { ids: string[]; data: UpdateUserDto }) =>
+      Promise.all(ids.map((id) => userService.updateUser(id, data))),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
     },
@@ -114,8 +109,13 @@ export function useUserPermissions(userId: string) {
 export function useAssignUserPermissions() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ userId, dto }: { userId: string; dto: AssignPermissionsDto }) =>
-      permissionService.assignUserPermissions(userId, dto),
+    mutationFn: ({
+      userId,
+      dto,
+    }: {
+      userId: string
+      dto: AssignPermissionsDto
+    }) => permissionService.assignUserPermissions(userId, dto),
     onSuccess: (_data, { userId }) => {
       queryClient.invalidateQueries({ queryKey: ['user-permissions', userId] })
     },
@@ -177,11 +177,13 @@ export function useRemoveUserScopes() {
 // ─── Dormitory Queries ────────────────────────────────────────────────────────
 
 /** Fetch all active dormitories for use in selectors/checkboxes */
-export function useDormitories(params?: { limit?: number; isActive?: boolean }) {
+export function useDormitories(params?: {
+  limit?: number
+  isActive?: boolean
+}) {
   return useQuery({
     queryKey: ['dormitories', params],
     queryFn: () => dormitoryService.getDormitories(params),
     staleTime: 30 * 1000,
   })
 }
-

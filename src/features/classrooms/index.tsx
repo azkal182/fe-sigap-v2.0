@@ -7,9 +7,12 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { ActiveContextBanner } from './components/active-context-banner'
-import { ClassroomFilterBar, type ClassroomFilter } from './components/classroom-filter-bar'
-import { ClassroomListCard } from './components/classroom-list-card'
 import { ClassroomDetailPanel } from './components/classroom-detail-panel'
+import {
+  ClassroomFilterBar,
+  type ClassroomFilter,
+} from './components/classroom-filter-bar'
+import { ClassroomListCard } from './components/classroom-list-card'
 import type { Classroom } from './services/classroom-service'
 
 const INITIAL_FILTER: ClassroomFilter = {
@@ -21,7 +24,9 @@ const INITIAL_FILTER: ClassroomFilter = {
 
 export function Classrooms() {
   const [filter, setFilter] = useState<ClassroomFilter>(INITIAL_FILTER)
-  const [selectedClassroom, setSelectedClassroom] = useState<Classroom | undefined>()
+  const [selectedClassroom, setSelectedClassroom] = useState<
+    Classroom | undefined
+  >()
 
   const handleSelect = (classroom: Classroom) => {
     // Toggle: click same classroom deselects it
@@ -49,14 +54,17 @@ export function Classrooms() {
 
         {/* Top bar: context (left) + filter (right) */}
         <div className='flex flex-wrap items-start justify-between gap-4'>
-          <div className='min-w-56 flex-1 max-w-xs'>
+          <div className='max-w-xs min-w-56 flex-1'>
             <ActiveContextBanner filter={filter} />
           </div>
           <div className='flex flex-col items-end gap-2'>
-            <ClassroomFilterBar value={filter} onChange={(f) => {
-              setFilter(f)
-              setSelectedClassroom(undefined) // reset detail when filter changes
-            }} />
+            <ClassroomFilterBar
+              value={filter}
+              onChange={(f) => {
+                setFilter(f)
+                setSelectedClassroom(undefined) // reset detail when filter changes
+              }}
+            />
           </div>
         </div>
 

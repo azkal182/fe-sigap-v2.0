@@ -1,3 +1,4 @@
+import { apiPaginatedResponse, apiResponse } from '@/lib/api-response'
 import { api } from '@/lib/axios'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -93,20 +94,22 @@ export const studentService = {
   getStudents: async (
     params?: PaginationParams
   ): Promise<PaginatedResponse<Student>> => {
-    const response = (await api.get('/students', { params })) as any
+    const response = apiPaginatedResponse<Student>(
+      await api.get('/students', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 
   /** GET /students/:id — single student detail (scope-aware) */
   getStudent: async (id: string): Promise<Student> => {
-    const response = (await api.get(`/students/${id}`)) as any
-    return response.data as Student
+    const response = apiResponse<Student>(await api.get(`/students/${id}`))
+    return response.data
   },
 
   /** POST /students — create student */
   createStudent: async (dto: CreateStudentDto): Promise<Student> => {
-    const response = (await api.post('/students', dto)) as any
-    return response.data as Student
+    const response = apiResponse<Student>(await api.post('/students', dto))
+    return response.data
   },
 
   /** PATCH /students/:id — update student */
@@ -114,8 +117,10 @@ export const studentService = {
     id: string,
     dto: UpdateStudentDto
   ): Promise<Student> => {
-    const response = (await api.patch(`/students/${id}`, dto)) as any
-    return response.data as Student
+    const response = apiResponse<Student>(
+      await api.patch(`/students/${id}`, dto)
+    )
+    return response.data
   },
 
   /** DELETE /students/:id — delete student */

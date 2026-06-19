@@ -7,7 +7,10 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { ScheduleContextBanner } from './components/schedule-context-banner'
-import { ScheduleFilterBar, type ScheduleFilter } from './components/schedule-filter-bar'
+import {
+  ScheduleFilterBar,
+  type ScheduleFilter,
+} from './components/schedule-filter-bar'
 import { ScheduleWeeklyView } from './components/schedule-weekly-view'
 
 const INITIAL_FILTER: ScheduleFilter = {
@@ -39,7 +42,7 @@ export function Schedules() {
 
         {/* Top bar: context (left) + filter (right) */}
         <div className='flex flex-wrap items-start justify-between gap-4'>
-          <div className='min-w-56 flex-1 max-w-xs'>
+          <div className='max-w-xs min-w-56 flex-1'>
             <ScheduleContextBanner filter={filter} />
           </div>
           <div className='flex flex-col items-end gap-2'>

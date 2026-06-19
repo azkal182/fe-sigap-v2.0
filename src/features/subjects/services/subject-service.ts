@@ -1,3 +1,4 @@
+import { apiPaginatedResponse, apiResponse } from '@/lib/api-response'
 import { api } from '@/lib/axios'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -56,22 +57,29 @@ export const subjectService = {
   getSubjects: async (
     params?: SubjectListParams
   ): Promise<PaginatedResponse<Subject>> => {
-    const response = (await api.get('/subjects', { params })) as any
+    const response = apiPaginatedResponse<Subject>(
+      await api.get('/subjects', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 
   getSubject: async (id: string): Promise<Subject> => {
-    const response = (await api.get(`/subjects/${id}`)) as any
+    const response = apiResponse<Subject>(await api.get(`/subjects/${id}`))
     return response.data
   },
 
   createSubject: async (data: CreateSubjectDto): Promise<Subject> => {
-    const response = (await api.post('/subjects', data)) as any
+    const response = apiResponse<Subject>(await api.post('/subjects', data))
     return response.data
   },
 
-  updateSubject: async (id: string, data: UpdateSubjectDto): Promise<Subject> => {
-    const response = (await api.patch(`/subjects/${id}`, data)) as any
+  updateSubject: async (
+    id: string,
+    data: UpdateSubjectDto
+  ): Promise<Subject> => {
+    const response = apiResponse<Subject>(
+      await api.patch(`/subjects/${id}`, data)
+    )
     return response.data
   },
 

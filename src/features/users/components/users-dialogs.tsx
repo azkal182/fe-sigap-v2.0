@@ -1,8 +1,8 @@
 import { UsersActionDialog } from './users-action-dialog'
 import { UsersDeleteDialog } from './users-delete-dialog'
 import { UsersPermissionsDialog } from './users-permissions-dialog'
-import { UsersScopesDialog } from './users-scopes-dialog'
 import { useUsers } from './users-provider'
+import { UsersScopesDialog } from './users-scopes-dialog'
 
 export function UsersDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useUsers()

@@ -2,6 +2,7 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
 import { PenLine, Trash2, ToggleLeft, ToggleRight } from 'lucide-react'
 import { toast } from 'sonner'
+import { getApiErrorMessage } from '@/lib/api-response'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -12,9 +13,9 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useToggleDormitoryStatus } from '../hooks/use-dormitories'
 import { type Dormitory } from '../services/dormitory-service'
 import { useDormitoriesContext } from './dormitories-provider'
-import { useToggleDormitoryStatus } from '../hooks/use-dormitories'
 
 type DataTableRowActionsProps = {
   row: Row<Dormitory>
@@ -40,9 +41,9 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
       toast.success(
         `"${dormitory.name}" ${newStatus ? 'activated' : 'deactivated'}`
       )
-    } catch (err: any) {
+    } catch (error: unknown) {
       toast.error(
-        err?.response?.data?.message || 'Failed to update dormitory status'
+        getApiErrorMessage(error, 'Failed to update dormitory status')
       )
     }
   }

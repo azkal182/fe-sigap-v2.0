@@ -1,3 +1,4 @@
+import { apiPaginatedResponse, apiResponse } from '@/lib/api-response'
 import { api } from '@/lib/axios'
 
 // ─── Shared ───────────────────────────────────────────────────────────────────
@@ -36,7 +37,9 @@ export const teacherService = {
   getTeachers: async (
     params?: TeacherListParams
   ): Promise<PaginatedResponse<Teacher>> => {
-    const response = (await api.get('/teachers', { params })) as any
+    const response = apiPaginatedResponse<Teacher>(
+      await api.get('/teachers', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 }
@@ -47,7 +50,7 @@ export interface ScheduleSlot {
   id: string
   slot: number
   startTime: string // HH:mm
-  endTime: string   // HH:mm
+  endTime: string // HH:mm
   dormitoryId: string
 }
 
@@ -64,7 +67,9 @@ export const scheduleSlotService = {
   getScheduleSlots: async (
     params?: ScheduleSlotListParams
   ): Promise<PaginatedResponse<ScheduleSlot>> => {
-    const response = (await api.get('/schedule-slots', { params })) as any
+    const response = apiPaginatedResponse<ScheduleSlot>(
+      await api.get('/schedule-slots', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 }
@@ -90,7 +95,12 @@ export interface Schedule {
   /** Present when includeDetails=true */
   teacher?: { id: string; name: string }
   /** Present when includeDetails=true */
-  scheduleSlot?: { id: string; slot: number; startTime: string; endTime: string }
+  scheduleSlot?: {
+    id: string
+    slot: number
+    startTime: string
+    endTime: string
+  }
 }
 
 export interface ScheduleListParams {
@@ -132,17 +142,24 @@ export const scheduleService = {
   getSchedules: async (
     params?: ScheduleListParams
   ): Promise<PaginatedResponse<Schedule>> => {
-    const response = (await api.get('/schedules', { params })) as any
+    const response = apiPaginatedResponse<Schedule>(
+      await api.get('/schedules', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 
   createSchedule: async (data: CreateScheduleDto): Promise<Schedule> => {
-    const response = (await api.post('/schedules', data)) as any
+    const response = apiResponse<Schedule>(await api.post('/schedules', data))
     return response.data
   },
 
-  updateSchedule: async (id: string, data: UpdateScheduleDto): Promise<Schedule> => {
-    const response = (await api.patch(`/schedules/${id}`, data)) as any
+  updateSchedule: async (
+    id: string,
+    data: UpdateScheduleDto
+  ): Promise<Schedule> => {
+    const response = apiResponse<Schedule>(
+      await api.patch(`/schedules/${id}`, data)
+    )
     return response.data
   },
 

@@ -52,10 +52,10 @@ export function Users() {
           </div>
           <UsersPrimaryButtons />
         </div>
-        <UsersTable 
-          data={data?.data || []} 
-          search={search} 
-          navigate={navigate} 
+        <UsersTable
+          data={data?.data || []}
+          search={search}
+          navigate={navigate}
           isLoading={isLoading}
           totalPages={data?.meta?.totalPages}
         />

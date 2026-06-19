@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { Trash2, UserX, UserCheck } from 'lucide-react'
 import { toast } from 'sonner'
+import { getApiErrorMessage } from '@/lib/api-response'
 import { Button } from '@/components/ui/button'
 import {
   Tooltip,
@@ -9,8 +10,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
-import { type User } from '../services/user-service'
 import { useBulkUpdateUsers } from '../hooks/use-users'
+import { type User } from '../services/user-service'
 import { UsersMultiDeleteDialog } from './users-multi-delete-dialog'
 
 type DataTableBulkActionsProps<TData> = {
@@ -33,15 +34,19 @@ export function DataTableBulkActions<TData>({
     const actionDone = isActive ? 'Activated' : 'Deactivated'
 
     toast.promise(
-      bulkUpdate.mutateAsync({ ids: selectedIds, data: { isActive } }).then(() => {
-        table.resetRowSelection()
-      }),
+      bulkUpdate
+        .mutateAsync({ ids: selectedIds, data: { isActive } })
+        .then(() => {
+          table.resetRowSelection()
+        }),
       {
         loading: `${action} ${count} user${count > 1 ? 's' : ''}...`,
         success: `${actionDone} ${count} user${count > 1 ? 's' : ''}`,
-        error: (err) =>
-          err?.response?.data?.message ||
-          `Failed to ${isActive ? 'activate' : 'deactivate'} users`,
+        error: (error: unknown) =>
+          getApiErrorMessage(
+            error,
+            `Failed to ${isActive ? 'activate' : 'deactivate'} users`
+          ),
       }
     )
   }

@@ -1,6 +1,6 @@
 import { Building2, Layers } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
 import type { SubjectFilter } from './subject-filter-bar'
 
 type SubjectContextBannerProps = {
@@ -19,7 +19,7 @@ export function SubjectContextBanner({ filter }: SubjectContextBannerProps) {
           : 'border-dashed bg-muted/40'
       )}
     >
-      <p className='text-xs font-medium uppercase tracking-widest text-muted-foreground'>
+      <p className='text-xs font-medium tracking-widest text-muted-foreground uppercase'>
         Active Context
       </p>
 
@@ -32,7 +32,7 @@ export function SubjectContextBanner({ filter }: SubjectContextBannerProps) {
           <div className='flex items-center gap-2'>
             <Building2 size={15} className='shrink-0 text-primary' />
             <div>
-              <p className='text-sm font-semibold leading-tight'>
+              <p className='text-sm leading-tight font-semibold'>
                 {filter.dormitory!.name}
               </p>
               <div className='mt-0.5 flex items-center gap-1.5'>
@@ -50,7 +50,9 @@ export function SubjectContextBanner({ filter }: SubjectContextBannerProps) {
             <div className='flex items-center gap-2 ps-0.5'>
               <Layers size={15} className='shrink-0 text-primary/70' />
               <div>
-                <p className='text-sm font-medium leading-tight'>{filter.track.name}</p>
+                <p className='text-sm leading-tight font-medium'>
+                  {filter.track.name}
+                </p>
                 <p className='text-xs text-muted-foreground'>
                   Track · Level {filter.track.level}
                 </p>

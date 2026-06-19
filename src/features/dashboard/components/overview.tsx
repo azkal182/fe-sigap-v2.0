@@ -13,9 +13,6 @@ import {
   ArrowUpRight,
   ArrowDownRight,
 } from 'lucide-react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
 import {
   BarChart,
   Bar,
@@ -29,6 +26,15 @@ import {
   Cell,
   Legend,
 } from 'recharts'
+import { Badge } from '@/components/ui/badge'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Progress } from '@/components/ui/progress'
 
 // ─── Mock Data ────────────────────────────────────────────────────────────────
 
@@ -52,12 +58,48 @@ const scheduleByDay = [
 ]
 
 const recentActivities = [
-  { type: 'student', text: 'Ahmad Fauzi added to Kelas 2A Putra', time: '2 menit lalu', icon: GraduationCap, color: 'text-blue-500' },
-  { type: 'schedule', text: 'Jadwal Matematika updated for Kelas 1B', time: '15 menit lalu', icon: CalendarDays, color: 'text-violet-500' },
-  { type: 'teacher', text: 'Ustadz Hamid assigned to Dorm Putra L.2', time: '1 jam lalu', icon: UserCog, color: 'text-emerald-500' },
-  { type: 'class', text: 'Kelas 3A Putri — roster updated (2 students)', time: '2 jam lalu', icon: BookOpen, color: 'text-orange-500' },
-  { type: 'subject', text: 'Fiqih added to track Tahfidz', time: '3 jam lalu', icon: BookMarked, color: 'text-pink-500' },
-  { type: 'slot', text: 'Schedule slot Slot 7 updated (14:00–15:00)', time: 'Kemarin', icon: Clock, color: 'text-yellow-500' },
+  {
+    type: 'student',
+    text: 'Ahmad Fauzi added to Kelas 2A Putra',
+    time: '2 menit lalu',
+    icon: GraduationCap,
+    color: 'text-blue-500',
+  },
+  {
+    type: 'schedule',
+    text: 'Jadwal Matematika updated for Kelas 1B',
+    time: '15 menit lalu',
+    icon: CalendarDays,
+    color: 'text-violet-500',
+  },
+  {
+    type: 'teacher',
+    text: 'Ustadz Hamid assigned to Dorm Putra L.2',
+    time: '1 jam lalu',
+    icon: UserCog,
+    color: 'text-emerald-500',
+  },
+  {
+    type: 'class',
+    text: 'Kelas 3A Putri — roster updated (2 students)',
+    time: '2 jam lalu',
+    icon: BookOpen,
+    color: 'text-orange-500',
+  },
+  {
+    type: 'subject',
+    text: 'Fiqih added to track Tahfidz',
+    time: '3 jam lalu',
+    icon: BookMarked,
+    color: 'text-pink-500',
+  },
+  {
+    type: 'slot',
+    text: 'Schedule slot Slot 7 updated (14:00–15:00)',
+    time: 'Kemarin',
+    icon: Clock,
+    color: 'text-yellow-500',
+  },
 ]
 
 const trackDistribution = [
@@ -172,7 +214,9 @@ export function DashboardOverview() {
                   <CalendarDays size={15} className='text-muted-foreground' />
                   Jadwal per Hari
                 </CardTitle>
-                <CardDescription>Total slot jadwal aktif minggu ini</CardDescription>
+                <CardDescription>
+                  Total slot jadwal aktif minggu ini
+                </CardDescription>
               </div>
               <Badge variant='secondary'>79 total slot</Badge>
             </div>
@@ -180,7 +224,11 @@ export function DashboardOverview() {
           <CardContent>
             <ResponsiveContainer width='100%' height={220}>
               <BarChart data={scheduleByDay} barCategoryGap='30%'>
-                <CartesianGrid strokeDasharray='3 3' stroke='hsl(var(--border))' vertical={false} />
+                <CartesianGrid
+                  strokeDasharray='3 3'
+                  stroke='hsl(var(--border))'
+                  vertical={false}
+                />
                 <XAxis
                   dataKey='day'
                   fontSize={12}
@@ -203,7 +251,11 @@ export function DashboardOverview() {
                     fontSize: '12px',
                   }}
                 />
-                <Bar dataKey='slots' fill='hsl(var(--primary))' radius={[4, 4, 0, 0]} />
+                <Bar
+                  dataKey='slots'
+                  fill='hsl(var(--primary))'
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -262,7 +314,9 @@ export function DashboardOverview() {
               <BookMarked size={15} className='text-muted-foreground' />
               Track Overview
             </CardTitle>
-            <CardDescription>Distribusi kelas & santri per track</CardDescription>
+            <CardDescription>
+              Distribusi kelas & santri per track
+            </CardDescription>
           </CardHeader>
           <CardContent className='space-y-4'>
             {trackDistribution.map((t) => (
@@ -279,15 +333,12 @@ export function DashboardOverview() {
                     {t.students} santri
                   </div>
                 </div>
-                <Progress
-                  value={(t.students / 513) * 100}
-                  className='h-2'
-                />
+                <Progress value={(t.students / 513) * 100} className='h-2' />
               </div>
             ))}
 
             {/* Quick stats */}
-            <div className='grid grid-cols-3 divide-x rounded-lg border mt-4'>
+            <div className='mt-4 grid grid-cols-3 divide-x rounded-lg border'>
               <div className='p-3 text-center'>
                 <p className='text-xs text-muted-foreground'>Subjects</p>
                 <p className='text-lg font-bold'>42</p>
@@ -313,7 +364,9 @@ export function DashboardOverview() {
                   <TrendingUp size={15} className='text-muted-foreground' />
                   Aktivitas Terbaru
                 </CardTitle>
-                <CardDescription>Perubahan data terkini di sistem</CardDescription>
+                <CardDescription>
+                  Perubahan data terkini di sistem
+                </CardDescription>
               </div>
               <div className='flex items-center gap-1.5 text-xs text-muted-foreground'>
                 <CheckCircle2 size={12} className='text-emerald-500' />
@@ -324,11 +377,14 @@ export function DashboardOverview() {
           <CardContent>
             <div className='space-y-0 divide-y'>
               {recentActivities.map((a, i) => (
-                <div key={i} className='flex items-start gap-3 py-3 first:pt-0 last:pb-0'>
+                <div
+                  key={i}
+                  className='flex items-start gap-3 py-3 first:pt-0 last:pb-0'
+                >
                   <div className='mt-0.5 rounded-md border p-1.5'>
                     <a.icon size={13} className={a.color} />
                   </div>
-                  <div className='flex-1 min-w-0'>
+                  <div className='min-w-0 flex-1'>
                     <p className='truncate text-sm'>{a.text}</p>
                     <p className='text-xs text-muted-foreground'>{a.time}</p>
                   </div>

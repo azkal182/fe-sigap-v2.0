@@ -14,7 +14,8 @@ const QUERY_KEY = 'teachers-page'
 export function useTeachers(params?: TeacherListParams) {
   return useQuery({
     queryKey: [QUERY_KEY, params],
-    queryFn: () => teacherService.getTeachers({ ...params, includeDetails: true }),
+    queryFn: () =>
+      teacherService.getTeachers({ ...params, includeDetails: true }),
   })
 }
 

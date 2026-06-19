@@ -1,3 +1,4 @@
+import { apiResponse } from '@/lib/api-response'
 import { api } from '@/lib/axios'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -15,9 +16,11 @@ export interface Permission {
 export const permissionService = {
   /** GET /permissions — list all permissions, optionally filtered by resource */
   getPermissions: async (resource?: string): Promise<Permission[]> => {
-    const response = (await api.get('/permissions', {
-      params: resource ? { resource } : undefined,
-    })) as any
-    return response.data as Permission[]
+    const response = apiResponse<Permission[]>(
+      await api.get('/permissions', {
+        params: resource ? { resource } : undefined,
+      })
+    )
+    return response.data
   },
 }

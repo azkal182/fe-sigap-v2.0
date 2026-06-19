@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
+import { getApiErrorMessage } from '@/lib/api-response'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { type Dormitory } from '../services/dormitory-service'
 import { useDeleteDormitory } from '../hooks/use-dormitories'
+import { type Dormitory } from '../services/dormitory-service'
 
 type DormitoriesDeleteDialogProps = {
   open: boolean
@@ -31,10 +32,8 @@ export function DormitoriesDeleteDialog({
       await deleteDormitory.mutateAsync(currentRow.id)
       toast.success(`Dormitory "${currentRow.name}" deleted`)
       onOpenChange(false)
-    } catch (err: any) {
-      toast.error(
-        err?.response?.data?.message || 'Failed to delete dormitory'
-      )
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, 'Failed to delete dormitory'))
     } finally {
       setValue('')
     }

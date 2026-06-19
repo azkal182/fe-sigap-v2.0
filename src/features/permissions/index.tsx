@@ -1,11 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Search as SearchIcon, ShieldCheck } from 'lucide-react'
-import { ConfigDrawer } from '@/components/config-drawer'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { Search } from '@/components/search'
-import { ThemeSwitch } from '@/components/theme-switch'
+import { Loader2, Search as SearchIcon, ShieldCheck } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import {
@@ -16,7 +10,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Loader2 } from 'lucide-react'
+import { ConfigDrawer } from '@/components/config-drawer'
+import { Header } from '@/components/layout/header'
+import { Main } from '@/components/layout/main'
+import { ProfileDropdown } from '@/components/profile-dropdown'
+import { Search } from '@/components/search'
+import { ThemeSwitch } from '@/components/theme-switch'
 import { usePermissions } from './hooks/use-permissions'
 
 export function Permissions() {
@@ -33,9 +32,7 @@ export function Permissions() {
         p.action.toLowerCase().includes(q) ||
         (p.description ?? '').toLowerCase().includes(q)
     )
-    return filtered.reduce<
-      Record<string, typeof permissions>
-    >((acc, perm) => {
+    return filtered.reduce<Record<string, typeof permissions>>((acc, perm) => {
       if (!acc[perm.resource]) acc[perm.resource] = []
       acc[perm.resource].push(perm)
       return acc
@@ -69,7 +66,7 @@ export function Permissions() {
 
         {/* Search filter */}
         <div className='relative w-full max-w-sm'>
-          <SearchIcon className='absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground' />
+          <SearchIcon className='absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground' />
           <Input
             placeholder='Search by name, resource or action...'
             value={search}
@@ -94,7 +91,7 @@ export function Permissions() {
               <div key={resource}>
                 <div className='mb-2 flex items-center gap-2'>
                   <ShieldCheck size={16} className='text-muted-foreground' />
-                  <h3 className='text-sm font-semibold uppercase tracking-wide text-muted-foreground'>
+                  <h3 className='text-sm font-semibold tracking-wide text-muted-foreground uppercase'>
                     {resource}
                   </h3>
                   <Badge variant='secondary' className='text-xs'>
@@ -118,7 +115,10 @@ export function Permissions() {
                             {perm.name}
                           </TableCell>
                           <TableCell>
-                            <Badge variant='outline' className='text-xs capitalize'>
+                            <Badge
+                              variant='outline'
+                              className='text-xs capitalize'
+                            >
                               {perm.action}
                             </Badge>
                           </TableCell>

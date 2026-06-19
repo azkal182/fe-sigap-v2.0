@@ -1,10 +1,11 @@
+import { apiPaginatedResponse, apiResponse } from '@/lib/api-response'
 import { api } from '@/lib/axios'
 
 export interface ScheduleSlot {
   id: string
   slot: number
   startTime: string // HH:mm
-  endTime: string   // HH:mm
+  endTime: string // HH:mm
   dormitoryId: string
 }
 
@@ -32,7 +33,7 @@ export interface ScheduleSlotListParams {
 export interface CreateScheduleSlotDto {
   slot: number
   startTime: string // HH:mm
-  endTime: string   // HH:mm
+  endTime: string // HH:mm
   dormitoryId: string
 }
 
@@ -47,17 +48,28 @@ export const scheduleSlotService = {
   getScheduleSlots: async (
     params?: ScheduleSlotListParams
   ): Promise<PaginatedResponse<ScheduleSlot>> => {
-    const response = (await api.get('/schedule-slots', { params })) as any
+    const response = apiPaginatedResponse<ScheduleSlot>(
+      await api.get('/schedule-slots', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 
-  createScheduleSlot: async (data: CreateScheduleSlotDto): Promise<ScheduleSlot> => {
-    const response = (await api.post('/schedule-slots', data)) as any
+  createScheduleSlot: async (
+    data: CreateScheduleSlotDto
+  ): Promise<ScheduleSlot> => {
+    const response = apiResponse<ScheduleSlot>(
+      await api.post('/schedule-slots', data)
+    )
     return response.data
   },
 
-  updateScheduleSlot: async (id: string, data: UpdateScheduleSlotDto): Promise<ScheduleSlot> => {
-    const response = (await api.patch(`/schedule-slots/${id}`, data)) as any
+  updateScheduleSlot: async (
+    id: string,
+    data: UpdateScheduleSlotDto
+  ): Promise<ScheduleSlot> => {
+    const response = apiResponse<ScheduleSlot>(
+      await api.patch(`/schedule-slots/${id}`, data)
+    )
     return response.data
   },
 

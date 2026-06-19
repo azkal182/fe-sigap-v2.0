@@ -10,9 +10,9 @@ import {
   Trash2,
   Layers,
 } from 'lucide-react'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -20,6 +20,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -28,12 +29,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { cn } from '@/lib/utils'
 import { useSubjects } from '../hooks/use-subjects'
+import type { Subject } from '../services/subject-service'
 import { SubjectActionDialog } from './subject-action-dialog'
 import { SubjectDeleteDialog } from './subject-delete-dialog'
 import type { SubjectFilter } from './subject-filter-bar'
-import type { Subject } from '../services/subject-service'
 
 type SubjectListCardProps = {
   filter: SubjectFilter
@@ -81,7 +81,10 @@ export function SubjectListCard({ filter }: SubjectListCardProps) {
                   </Badge>
                 )}
                 {isFetching && !isLoading && (
-                  <Loader2 size={13} className='animate-spin text-muted-foreground' />
+                  <Loader2
+                    size={13}
+                    className='animate-spin text-muted-foreground'
+                  />
                 )}
               </CardTitle>
               <CardDescription className='mt-0.5'>
@@ -130,7 +133,9 @@ export function SubjectListCard({ filter }: SubjectListCardProps) {
               <BookMarked size={40} className='text-muted-foreground/40' />
               <div>
                 <p className='text-sm font-medium text-muted-foreground'>
-                  {search ? 'No subjects match your search.' : 'No subjects found.'}
+                  {search
+                    ? 'No subjects match your search.'
+                    : 'No subjects found.'}
                 </p>
                 {!filter.dormitory && (
                   <p className='mt-1 text-xs text-muted-foreground'>
@@ -171,14 +176,24 @@ export function SubjectListCard({ filter }: SubjectListCardProps) {
                       <TableCell>
                         {subject.track ? (
                           <div className='flex items-center gap-1.5'>
-                            <Layers size={12} className='shrink-0 text-muted-foreground' />
-                            <span className='text-sm'>{subject.track.name}</span>
-                            <Badge variant='outline' className='h-4 px-1 text-[10px]'>
+                            <Layers
+                              size={12}
+                              className='shrink-0 text-muted-foreground'
+                            />
+                            <span className='text-sm'>
+                              {subject.track.name}
+                            </span>
+                            <Badge
+                              variant='outline'
+                              className='h-4 px-1 text-[10px]'
+                            >
                               Lv.{subject.track.level}
                             </Badge>
                           </div>
                         ) : (
-                          <span className='text-xs text-muted-foreground italic'>—</span>
+                          <span className='text-xs text-muted-foreground italic'>
+                            —
+                          </span>
                         )}
                       </TableCell>
                       <TableCell>
@@ -187,7 +202,9 @@ export function SubjectListCard({ filter }: SubjectListCardProps) {
                             size='icon'
                             variant='ghost'
                             className='h-7 w-7'
-                            onClick={() => setActionDialog({ open: true, subject })}
+                            onClick={() =>
+                              setActionDialog({ open: true, subject })
+                            }
                           >
                             <Pencil size={13} />
                           </Button>
@@ -195,7 +212,9 @@ export function SubjectListCard({ filter }: SubjectListCardProps) {
                             size='icon'
                             variant='ghost'
                             className='h-7 w-7 text-destructive hover:text-destructive'
-                            onClick={() => setDeleteDialog({ open: true, subject })}
+                            onClick={() =>
+                              setDeleteDialog({ open: true, subject })
+                            }
                           >
                             <Trash2 size={13} />
                           </Button>
@@ -211,7 +230,8 @@ export function SubjectListCard({ filter }: SubjectListCardProps) {
                 <div className='flex items-center justify-between border-t px-6 py-3'>
                   <p className='text-xs text-muted-foreground'>
                     Showing {(page - 1) * PAGE_SIZE + 1}–
-                    {Math.min(page * PAGE_SIZE, meta?.total ?? 0)} of {meta?.total}
+                    {Math.min(page * PAGE_SIZE, meta?.total ?? 0)} of{' '}
+                    {meta?.total}
                   </p>
                   <div className='flex items-center gap-1.5'>
                     <Button

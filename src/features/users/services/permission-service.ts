@@ -1,3 +1,4 @@
+import { apiPaginatedResponse, apiResponse } from '@/lib/api-response'
 import { api } from '@/lib/axios'
 
 // ─── Permission Types ────────────────────────────────────────────────────────
@@ -46,16 +47,20 @@ export interface RemoveScopesDto {
 export const permissionService = {
   /** List all available permissions (optionally filtered by resource) */
   getAllPermissions: async (resource?: string): Promise<Permission[]> => {
-    const response = await api.get('/permissions', {
-      params: resource ? { resource } : undefined,
-    }) as any
-    return response.data as Permission[]
+    const response = apiResponse<Permission[]>(
+      await api.get('/permissions', {
+        params: resource ? { resource } : undefined,
+      })
+    )
+    return response.data
   },
 
   /** GET /users/:id/permissions — returns direct permissions assigned to the user */
   getUserPermissions: async (userId: string): Promise<Permission[]> => {
-    const response = await api.get(`/users/${userId}/permissions`) as any
-    return response.data as Permission[]
+    const response = apiResponse<Permission[]>(
+      await api.get(`/users/${userId}/permissions`)
+    )
+    return response.data
   },
 
   /** POST /users/:id/permissions — assign direct permissions to user */
@@ -80,8 +85,10 @@ export const permissionService = {
 export const scopeService = {
   /** GET /users/:id/scopes — all resource scopes for user */
   getUserScopes: async (userId: string): Promise<UserScope[]> => {
-    const response = await api.get(`/users/${userId}/scopes`) as any
-    return response.data as UserScope[]
+    const response = apiResponse<UserScope[]>(
+      await api.get(`/users/${userId}/scopes`)
+    )
+    return response.data
   },
 
   /** POST /users/:id/scopes — assign resource scopes to user */
@@ -127,7 +134,9 @@ export const dormitoryService = {
     limit?: number
     isActive?: boolean
   }): Promise<DormitoriesResponse> => {
-    const response = await api.get('/dormitories', { params }) as any
+    const response = apiPaginatedResponse<Dormitory>(
+      await api.get('/dormitories', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 }

@@ -86,13 +86,8 @@ export function useReplaceRolePermissions() {
 export function useRemoveRolePermission() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({
-      id,
-      permissionId,
-    }: {
-      id: string
-      permissionId: string
-    }) => roleService.removePermission(id, permissionId),
+    mutationFn: ({ id, permissionId }: { id: string; permissionId: string }) =>
+      roleService.removePermission(id, permissionId),
     onSuccess: (_data, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['roles', id] })
     },

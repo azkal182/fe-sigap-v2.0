@@ -28,8 +28,6 @@ export function StudentsProvider({ children }: { children: React.ReactNode }) {
 export const useStudentsContext = () => {
   const ctx = React.useContext(StudentsContext)
   if (!ctx)
-    throw new Error(
-      'useStudentsContext must be used within <StudentsProvider>'
-    )
+    throw new Error('useStudentsContext must be used within <StudentsProvider>')
   return ctx
 }

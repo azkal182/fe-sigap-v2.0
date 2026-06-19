@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Cross2Icon } from '@radix-ui/react-icons'
 import {
   type SortingState,
   type VisibilityState,
@@ -8,10 +9,11 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Cross2Icon } from '@radix-ui/react-icons'
 import { Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
@@ -20,8 +22,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import {
   DataTablePagination,
   DataTableViewOptions,
@@ -91,14 +91,13 @@ export function StudentsTable({
     [dormitoryFilter]
   )
 
-  const { pagination, onPaginationChange, ensurePageInRange } = useTableUrlState(
-    {
+  const { pagination, onPaginationChange, ensurePageInRange } =
+    useTableUrlState({
       search,
       navigate,
       pagination: { defaultPage: 1, defaultPageSize: 10 },
       globalFilter: { enabled: false },
-    }
-  )
+    })
 
   const table = useReactTable({
     data,
@@ -159,7 +158,12 @@ export function StudentsTable({
     })
   }
 
-  const isFiltered = !!(searchText || genderFilter || statusFilter || dormitoryFilter)
+  const isFiltered = !!(
+    searchText ||
+    genderFilter ||
+    statusFilter ||
+    dormitoryFilter
+  )
 
   return (
     <div className='flex flex-1 flex-col gap-4'>

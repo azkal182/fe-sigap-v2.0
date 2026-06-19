@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { useAuthStore } from '@/stores/auth-store'
 import { toast } from 'sonner'
+import { useAuthStore } from '@/stores/auth-store'
 
 export const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/v1`,
@@ -50,10 +50,15 @@ api.interceptors.response.use(
           // Use a plain axios call (not `api`) to avoid infinite interceptor loop
           const { default: axios } = await import('axios')
           const baseURL = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'}/api/v1`
-          const res = await axios.post(`${baseURL}/auth/refresh`, { refreshToken })
-          const { accessToken: newAccess, refreshToken: newRefresh } = res.data?.data ?? res.data
+          const res = await axios.post(`${baseURL}/auth/refresh`, {
+            refreshToken,
+          })
+          const { accessToken: newAccess, refreshToken: newRefresh } =
+            res.data?.data ?? res.data
 
-          useAuthStore.getState().auth.setTokens(newAccess, newRefresh ?? refreshToken)
+          useAuthStore
+            .getState()
+            .auth.setTokens(newAccess, newRefresh ?? refreshToken)
 
           // Retry the original request with the new token
           originalRequest.headers.Authorization = `Bearer ${newAccess}`

@@ -1,3 +1,4 @@
+import { apiPaginatedResponse, apiResponse } from '@/lib/api-response'
 import { api } from '@/lib/axios'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -94,22 +95,29 @@ export const teacherService = {
   getTeachers: async (
     params?: TeacherListParams
   ): Promise<PaginatedResponse<Teacher>> => {
-    const response = (await api.get('/teachers', { params })) as any
+    const response = apiPaginatedResponse<Teacher>(
+      await api.get('/teachers', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 
   getTeacherById: async (id: string): Promise<Teacher> => {
-    const response = (await api.get(`/teachers/${id}`)) as any
+    const response = apiResponse<Teacher>(await api.get(`/teachers/${id}`))
     return response.data
   },
 
   createTeacher: async (data: CreateTeacherDto): Promise<Teacher> => {
-    const response = (await api.post('/teachers', data)) as any
+    const response = apiResponse<Teacher>(await api.post('/teachers', data))
     return response.data
   },
 
-  updateTeacher: async (id: string, data: UpdateTeacherDto): Promise<Teacher> => {
-    const response = (await api.patch(`/teachers/${id}`, data)) as any
+  updateTeacher: async (
+    id: string,
+    data: UpdateTeacherDto
+  ): Promise<Teacher> => {
+    const response = apiResponse<Teacher>(
+      await api.patch(`/teachers/${id}`, data)
+    )
     return response.data
   },
 
@@ -125,7 +133,10 @@ export const teacherService = {
     await api.post(`/teachers/${id}/user`, data)
   },
 
-  linkTeacherUser: async (id: string, data: LinkTeacherUserDto): Promise<void> => {
+  linkTeacherUser: async (
+    id: string,
+    data: LinkTeacherUserDto
+  ): Promise<void> => {
     await api.post(`/teachers/${id}/user`, data)
   },
 

@@ -1,3 +1,4 @@
+import { apiPaginatedResponse, apiResponse } from '@/lib/api-response'
 import { api } from '@/lib/axios'
 
 // ─── Shared pagination types ──────────────────────────────────────────────────
@@ -33,8 +34,12 @@ export interface TrackListParams {
 }
 
 export const trackService = {
-  getTracks: async (params?: TrackListParams): Promise<PaginatedResponse<Track>> => {
-    const response = await api.get('/tracks', { params }) as any
+  getTracks: async (
+    params?: TrackListParams
+  ): Promise<PaginatedResponse<Track>> => {
+    const response = apiPaginatedResponse<Track>(
+      await api.get('/tracks', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 }
@@ -101,23 +106,32 @@ export interface UpdateClassroomDto {
 }
 
 export const classroomService = {
-  getClassrooms: async (params?: ClassroomListParams): Promise<PaginatedResponse<Classroom>> => {
-    const response = await api.get('/classes', { params }) as any
+  getClassrooms: async (
+    params?: ClassroomListParams
+  ): Promise<PaginatedResponse<Classroom>> => {
+    const response = apiPaginatedResponse<Classroom>(
+      await api.get('/classes', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 
   getClassroom: async (id: string): Promise<Classroom> => {
-    const response = await api.get(`/classes/${id}`) as any
+    const response = apiResponse<Classroom>(await api.get(`/classes/${id}`))
     return response.data
   },
 
   createClassroom: async (data: CreateClassroomDto): Promise<Classroom> => {
-    const response = await api.post('/classes', data) as any
+    const response = apiResponse<Classroom>(await api.post('/classes', data))
     return response.data
   },
 
-  updateClassroom: async (id: string, data: UpdateClassroomDto): Promise<Classroom> => {
-    const response = await api.patch(`/classes/${id}`, data) as any
+  updateClassroom: async (
+    id: string,
+    data: UpdateClassroomDto
+  ): Promise<Classroom> => {
+    const response = apiResponse<Classroom>(
+      await api.patch(`/classes/${id}`, data)
+    )
     return response.data
   },
 
@@ -128,7 +142,10 @@ export const classroomService = {
 
 // ─── Student History (students in a class) ────────────────────────────────────
 
-export type StudentHistoryStatus = 'STUDYING' | 'CLASS_TRANSFER' | 'TRACK_GRADUATED'
+export type StudentHistoryStatus =
+  | 'STUDYING'
+  | 'CLASS_TRANSFER'
+  | 'TRACK_GRADUATED'
 
 export interface StudentHistory {
   id: string
@@ -161,7 +178,9 @@ export const studentHistoryService = {
   getStudentHistories: async (
     params?: StudentHistoryListParams
   ): Promise<PaginatedResponse<StudentHistory>> => {
-    const response = (await api.get('/student-histories', { params })) as any
+    const response = apiPaginatedResponse<StudentHistory>(
+      await api.get('/student-histories', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 }
@@ -204,8 +223,9 @@ export const scheduleService = {
   getSchedules: async (
     params?: ScheduleListParams
   ): Promise<PaginatedResponse<Schedule>> => {
-    const response = (await api.get('/schedules', { params })) as any
+    const response = apiPaginatedResponse<Schedule>(
+      await api.get('/schedules', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 }
-

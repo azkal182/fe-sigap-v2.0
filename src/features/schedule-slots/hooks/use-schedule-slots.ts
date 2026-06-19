@@ -6,7 +6,10 @@ import {
   type UpdateScheduleSlotDto,
 } from '../services/schedule-slot-service'
 
-export function useScheduleSlots(params?: ScheduleSlotListParams, enabled = true) {
+export function useScheduleSlots(
+  params?: ScheduleSlotListParams,
+  enabled = true
+) {
   return useQuery({
     queryKey: ['schedule-slots-page', params],
     queryFn: () => scheduleSlotService.getScheduleSlots(params),

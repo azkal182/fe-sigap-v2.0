@@ -1,6 +1,6 @@
 import { Building2, Layers } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
 import type { ClassroomFilter } from './classroom-filter-bar'
 
 type ActiveContextBannerProps = {
@@ -19,7 +19,7 @@ export function ActiveContextBanner({ filter }: ActiveContextBannerProps) {
           : 'border-dashed bg-muted/40'
       )}
     >
-      <p className='text-xs font-medium uppercase tracking-widest text-muted-foreground'>
+      <p className='text-xs font-medium tracking-widest text-muted-foreground uppercase'>
         Active Context
       </p>
 
@@ -33,14 +33,11 @@ export function ActiveContextBanner({ filter }: ActiveContextBannerProps) {
           <div className='flex items-center gap-2'>
             <Building2 size={15} className='shrink-0 text-primary' />
             <div>
-              <p className='text-sm font-semibold leading-tight'>
+              <p className='text-sm leading-tight font-semibold'>
                 {filter.dormitory!.name}
               </p>
               <div className='mt-0.5 flex items-center gap-1.5'>
-                <Badge
-                  variant='secondary'
-                  className='h-4 px-1.5 text-[10px]'
-                >
+                <Badge variant='secondary' className='h-4 px-1.5 text-[10px]'>
                   {filter.dormitory!.gender}
                 </Badge>
                 <span className='text-xs text-muted-foreground'>
@@ -55,7 +52,7 @@ export function ActiveContextBanner({ filter }: ActiveContextBannerProps) {
             <div className='flex items-center gap-2 ps-0.5'>
               <Layers size={15} className='shrink-0 text-primary/70' />
               <div>
-                <p className='text-sm font-medium leading-tight'>
+                <p className='text-sm leading-tight font-medium'>
                   {filter.track.name}
                 </p>
                 <p className='text-xs text-muted-foreground'>
@@ -69,7 +66,9 @@ export function ActiveContextBanner({ filter }: ActiveContextBannerProps) {
           ) : (
             <div className='flex items-center gap-2 text-muted-foreground'>
               <Layers size={15} className='shrink-0' />
-              <p className='text-xs italic'>No specific track selected (showing all)</p>
+              <p className='text-xs italic'>
+                No specific track selected (showing all)
+              </p>
             </div>
           )}
         </div>

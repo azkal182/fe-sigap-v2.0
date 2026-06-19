@@ -1,3 +1,4 @@
+import { apiPaginatedResponse, apiResponse } from '@/lib/api-response'
 import { api } from '@/lib/axios'
 
 export interface UserScope {
@@ -71,27 +72,31 @@ export interface UpdateUserDto {
 }
 
 export const userService = {
-  getUsers: async (params?: PaginationParams): Promise<PaginatedResponse<User>> => {
-    const response = await api.get('/users', { params }) as any
+  getUsers: async (
+    params?: PaginationParams
+  ): Promise<PaginatedResponse<User>> => {
+    const response = apiPaginatedResponse<User>(
+      await api.get('/users', { params })
+    )
     return {
       data: response.data,
       meta: response.meta,
     }
   },
-  
+
   createUser: async (data: CreateUserDto): Promise<User> => {
-    const response = await api.post('/users', data) as any
+    const response = apiResponse<User>(await api.post('/users', data))
     return response.data
   },
 
   updateUser: async (id: string, data: UpdateUserDto): Promise<User> => {
-    const response = await api.patch(`/users/${id}`, data) as any
+    const response = apiResponse<User>(await api.patch(`/users/${id}`, data))
     return response.data
   },
 
   deleteUser: async (id: string): Promise<void> => {
     await api.delete(`/users/${id}`)
-  }
+  },
 }
 
 export interface Role {
@@ -101,11 +106,15 @@ export interface Role {
 }
 
 export const roleService = {
-  getRoles: async (params?: PaginationParams): Promise<PaginatedResponse<Role>> => {
-    const response = await api.get('/roles', { params }) as any
+  getRoles: async (
+    params?: PaginationParams
+  ): Promise<PaginatedResponse<Role>> => {
+    const response = apiPaginatedResponse<Role>(
+      await api.get('/roles', { params })
+    )
     return {
       data: response.data,
       meta: response.meta,
     }
-  }
+  },
 }

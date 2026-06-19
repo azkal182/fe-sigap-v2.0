@@ -1,3 +1,4 @@
+import { apiPaginatedResponse, apiResponse } from '@/lib/api-response'
 import { api } from '@/lib/axios'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -60,26 +61,28 @@ export const roleService = {
   getRoles: async (
     params?: PaginationParams
   ): Promise<PaginatedResponse<Role>> => {
-    const response = (await api.get('/roles', { params })) as any
+    const response = apiPaginatedResponse<Role>(
+      await api.get('/roles', { params })
+    )
     return { data: response.data, meta: response.meta }
   },
 
   /** GET /roles/:id — role detail with permissions */
   getRole: async (id: string): Promise<Role> => {
-    const response = (await api.get(`/roles/${id}`)) as any
-    return response.data as Role
+    const response = apiResponse<Role>(await api.get(`/roles/${id}`))
+    return response.data
   },
 
   /** POST /roles — create role */
   createRole: async (dto: CreateRoleDto): Promise<Role> => {
-    const response = (await api.post('/roles', dto)) as any
-    return response.data as Role
+    const response = apiResponse<Role>(await api.post('/roles', dto))
+    return response.data
   },
 
   /** PATCH /roles/:id — update non-system role */
   updateRole: async (id: string, dto: UpdateRoleDto): Promise<Role> => {
-    const response = (await api.patch(`/roles/${id}`, dto)) as any
-    return response.data as Role
+    const response = apiResponse<Role>(await api.patch(`/roles/${id}`, dto))
+    return response.data
   },
 
   /** DELETE /roles/:id — delete non-system role */
@@ -104,10 +107,7 @@ export const roleService = {
   },
 
   /** DELETE /roles/:id/permissions/:permissionId — remove one permission */
-  removePermission: async (
-    id: string,
-    permissionId: string
-  ): Promise<void> => {
+  removePermission: async (id: string, permissionId: string): Promise<void> => {
     await api.delete(`/roles/${id}/permissions/${permissionId}`)
   },
 }

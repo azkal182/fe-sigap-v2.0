@@ -1,6 +1,6 @@
 import { Building2, BookOpen, Layers } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
 import type { ScheduleFilter } from './schedule-filter-bar'
 
 type ScheduleContextBannerProps = {
@@ -14,10 +14,12 @@ export function ScheduleContextBanner({ filter }: ScheduleContextBannerProps) {
     <div
       className={cn(
         'flex flex-col gap-2 rounded-lg border p-4',
-        hasContext ? 'border-primary/20 bg-primary/5' : 'border-dashed bg-muted/40'
+        hasContext
+          ? 'border-primary/20 bg-primary/5'
+          : 'border-dashed bg-muted/40'
       )}
     >
-      <p className='text-xs font-medium uppercase tracking-widest text-muted-foreground'>
+      <p className='text-xs font-medium tracking-widest text-muted-foreground uppercase'>
         Active Context
       </p>
 
@@ -31,12 +33,16 @@ export function ScheduleContextBanner({ filter }: ScheduleContextBannerProps) {
           <div className='flex items-center gap-2'>
             <Building2 size={15} className='shrink-0 text-primary' />
             <div>
-              <p className='text-sm font-semibold leading-tight'>{filter.dormitory!.name}</p>
+              <p className='text-sm leading-tight font-semibold'>
+                {filter.dormitory!.name}
+              </p>
               <div className='mt-0.5 flex items-center gap-1.5'>
                 <Badge variant='secondary' className='h-4 px-1.5 text-[10px]'>
                   {filter.dormitory!.gender}
                 </Badge>
-                <span className='text-xs text-muted-foreground'>Level {filter.dormitory!.level}</span>
+                <span className='text-xs text-muted-foreground'>
+                  Level {filter.dormitory!.level}
+                </span>
               </div>
             </div>
           </div>
@@ -46,11 +52,15 @@ export function ScheduleContextBanner({ filter }: ScheduleContextBannerProps) {
             <div className='flex items-center gap-2 ps-0.5'>
               <BookOpen size={15} className='shrink-0 text-primary/70' />
               <div>
-                <p className='text-sm font-medium leading-tight'>{filter.classroom.name}</p>
+                <p className='text-sm leading-tight font-medium'>
+                  {filter.classroom.name}
+                </p>
                 {filter.classroom.track && (
-                  <div className='flex items-center gap-1 mt-0.5'>
+                  <div className='mt-0.5 flex items-center gap-1'>
                     <Layers size={10} className='text-muted-foreground' />
-                    <p className='text-xs text-muted-foreground'>{filter.classroom.track.name}</p>
+                    <p className='text-xs text-muted-foreground'>
+                      {filter.classroom.track.name}
+                    </p>
                   </div>
                 )}
               </div>

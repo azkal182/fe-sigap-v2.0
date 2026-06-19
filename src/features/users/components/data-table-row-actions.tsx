@@ -21,7 +21,9 @@ type DataTableRowActionsProps = {
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentRow } = useUsers()
 
-  const handleAction = (dialog: 'edit' | 'delete' | 'permissions' | 'scopes') => {
+  const handleAction = (
+    dialog: 'edit' | 'delete' | 'permissions' | 'scopes'
+  ) => {
     setCurrentRow(row.original)
     setOpen(dialog)
   }

@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useAuthStore } from '@/stores/auth-store'
-import { authService } from '@/features/auth/services/auth-service'
 import { AuthenticatedLayout } from '@/components/layout/authenticated-layout'
+import { authService } from '@/features/auth/services/auth-service'
 
 export const Route = createFileRoute('/_authenticated')({
   // Auth guard: runs on every navigation to any /_authenticated/* route

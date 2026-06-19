@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
+import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -32,7 +32,10 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useDormitories } from '@/features/users/hooks/use-users'
-import { useCreateScheduleSlot, useUpdateScheduleSlot } from '../hooks/use-schedule-slots'
+import {
+  useCreateScheduleSlot,
+  useUpdateScheduleSlot,
+} from '../hooks/use-schedule-slots'
 import type { ScheduleSlot } from '../services/schedule-slot-service'
 
 // HH:mm pattern
@@ -82,7 +85,9 @@ export function ScheduleSlotActionDialog({
     },
   })
 
-  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({ limit: 100 })
+  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({
+    limit: 100,
+  })
   const dormitories = dormitoriesData?.data ?? []
 
   useEffect(() => {
@@ -102,7 +107,7 @@ export function ScheduleSlotActionDialog({
         endTime: '',
       })
     }
-  }, [open, isEdit, slot, defaultDormitoryId])
+  }, [open, isEdit, slot, defaultDormitoryId, form])
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -138,7 +143,9 @@ export function ScheduleSlotActionDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='sm:max-w-md'>
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Edit Schedule Slot' : 'Add Schedule Slot'}</DialogTitle>
+          <DialogTitle>
+            {isEdit ? 'Edit Schedule Slot' : 'Add Schedule Slot'}
+          </DialogTitle>
           <DialogDescription>
             {isEdit
               ? 'Update the slot number and time range for this schedule slot.'
@@ -162,7 +169,11 @@ export function ScheduleSlotActionDialog({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder={isLoadingDorm ? 'Loading…' : 'Select dormitory…'} />
+                        <SelectValue
+                          placeholder={
+                            isLoadingDorm ? 'Loading…' : 'Select dormitory…'
+                          }
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -232,7 +243,11 @@ export function ScheduleSlotActionDialog({
             </div>
 
             <DialogFooter className='pt-2'>
-              <Button variant='outline' type='button' onClick={() => onOpenChange(false)}>
+              <Button
+                variant='outline'
+                type='button'
+                onClick={() => onOpenChange(false)}
+              >
                 Cancel
               </Button>
               <Button type='submit' disabled={isPending}>

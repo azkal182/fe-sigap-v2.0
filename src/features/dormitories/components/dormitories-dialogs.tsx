@@ -5,15 +5,14 @@ import { useDormitoriesContext } from './dormitories-provider'
 export function DormitoriesDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useDormitoriesContext()
 
-  const handleClose =
-    (dialogType: typeof open) => (state: boolean) => {
-      if (!state) {
-        setOpen(null)
-        setTimeout(() => setCurrentRow(null), 500)
-      } else {
-        setOpen(dialogType)
-      }
+  const handleClose = (dialogType: typeof open) => (state: boolean) => {
+    if (!state) {
+      setOpen(null)
+      setTimeout(() => setCurrentRow(null), 500)
+    } else {
+      setOpen(dialogType)
     }
+  }
 
   return (
     <>

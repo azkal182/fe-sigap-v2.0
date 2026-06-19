@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { KeyRound, Loader2, Save, ShieldCheck } from 'lucide-react'
 import { toast } from 'sonner'
+import { getApiErrorMessage } from '@/lib/api-response'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -18,13 +19,18 @@ import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { usePermissions } from '@/features/permissions/hooks/use-permissions'
-import { type Role } from '../services/role-service'
 import { useRole, useReplaceRolePermissions } from '../hooks/use-roles'
+import { type Role } from '../services/role-service'
 
 type RolesPermissionsDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   currentRow: Role
+}
+
+type PermissionSelection = {
+  roleId: string
+  ids: Set<string>
 }
 
 export function RolesPermissionsDialog({
@@ -37,7 +43,8 @@ export function RolesPermissionsDialog({
   // Fetch fresh role detail (to get current permissions)
   const { data: roleDetail, isLoading: isLoadingRole } = useRole(currentRow.id)
   // Fetch all available system permissions
-  const { data: allPermissions = [], isLoading: isLoadingPerms } = usePermissions()
+  const { data: allPermissions = [], isLoading: isLoadingPerms } =
+    usePermissions()
 
   const replacePermissions = useReplaceRolePermissions()
   const isLoading = isLoadingRole || isLoadingPerms
@@ -49,12 +56,10 @@ export function RolesPermissionsDialog({
   )
 
   // Local draft state (so user can toggle multiple then save all at once)
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [selection, setSelection] = useState<PermissionSelection | null>(null)
 
-  // Initialize local state when data loads
-  useMemo(() => {
-    setSelectedIds(new Set(currentPermissionIds))
-  }, [currentPermissionIds])
+  const selectedIds =
+    selection?.roleId === currentRow.id ? selection.ids : currentPermissionIds
 
   // Filter and group all permissions by resource
   const grouped = useMemo(() => {
@@ -77,20 +82,24 @@ export function RolesPermissionsDialog({
   }, [allPermissions, search])
 
   const handleToggle = (permId: string, checked: boolean) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev)
+    setSelection((prev) => {
+      const base =
+        prev?.roleId === currentRow.id ? prev.ids : currentPermissionIds
+      const next = new Set(base)
       if (checked) next.add(permId)
       else next.delete(permId)
-      return next
+      return { roleId: currentRow.id, ids: next }
     })
   }
 
   const handleSelectAll = (_resource: string, perms: typeof allPermissions) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev)
-      const allChecked = perms.every((p) => prev.has(p.id))
+    setSelection((prev) => {
+      const base =
+        prev?.roleId === currentRow.id ? prev.ids : currentPermissionIds
+      const next = new Set(base)
+      const allChecked = perms.every((p) => base.has(p.id))
       perms.forEach((p) => (allChecked ? next.delete(p.id) : next.add(p.id)))
-      return next
+      return { roleId: currentRow.id, ids: next }
     })
   }
 
@@ -101,9 +110,10 @@ export function RolesPermissionsDialog({
         dto: { permissionIds: Array.from(selectedIds) },
       })
       toast.success(`Permissions updated for role "${currentRow.name}"`)
+      setSelection(null)
       onOpenChange(false)
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Failed to update permissions')
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, 'Failed to update permissions'))
     }
   }
 
@@ -119,7 +129,10 @@ export function RolesPermissionsDialog({
     <Dialog
       open={open}
       onOpenChange={(state) => {
-        if (!state) setSearch('')
+        if (!state) {
+          setSearch('')
+          setSelection(null)
+        }
         onOpenChange(state)
       }}
     >
@@ -133,7 +146,7 @@ export function RolesPermissionsDialog({
             Assign permissions to role{' '}
             <span className='font-semibold'>{currentRow.name}</span>.
             {currentRow.isSystem && (
-              <span className='ms-1 text-orange-500 font-medium'>
+              <span className='ms-1 font-medium text-orange-500'>
                 (System role — changes are allowed)
               </span>
             )}
@@ -141,12 +154,10 @@ export function RolesPermissionsDialog({
         </DialogHeader>
 
         <div className='flex items-center gap-2 text-xs text-muted-foreground'>
-          <Badge variant='secondary'>
-            {selectedIds.size} selected
-          </Badge>
+          <Badge variant='secondary'>{selectedIds.size} selected</Badge>
           <span>of {allPermissions.length} permissions</span>
           {hasChanges && (
-            <Badge variant='outline' className='text-blue-600 border-blue-600'>
+            <Badge variant='outline' className='border-blue-600 text-blue-600'>
               Unsaved changes
             </Badge>
           )}
@@ -184,11 +195,17 @@ export function RolesPermissionsDialog({
                       onCheckedChange={() => handleSelectAll(resource, perms)}
                     />
                     <div className='flex items-center gap-1.5'>
-                      <ShieldCheck size={12} className='text-muted-foreground' />
-                      <p className='text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
+                      <ShieldCheck
+                        size={12}
+                        className='text-muted-foreground'
+                      />
+                      <p className='text-xs font-semibold tracking-wide text-muted-foreground uppercase'>
                         {resource}
                       </p>
-                      <Badge variant='secondary' className='h-4 px-1 text-[10px]'>
+                      <Badge
+                        variant='secondary'
+                        className='h-4 px-1 text-[10px]'
+                      >
                         {perms.filter((p) => selectedIds.has(p.id)).length}/
                         {perms.length}
                       </Badge>

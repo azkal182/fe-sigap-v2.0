@@ -31,7 +31,9 @@ export function ScheduleSlotDeleteDialog({
   const handleDelete = async () => {
     try {
       await deleteSlot.mutateAsync(slot.id)
-      toast.success(`Slot ${slot.slot} (${slot.startTime}–${slot.endTime}) deleted.`)
+      toast.success(
+        `Slot ${slot.slot} (${slot.startTime}–${slot.endTime}) deleted.`
+      )
       onOpenChange(false)
     } catch {
       // handled by interceptor
@@ -52,7 +54,9 @@ export function ScheduleSlotDeleteDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deleteSlot.isPending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={deleteSlot.isPending}>
+            Cancel
+          </AlertDialogCancel>
           <Button
             variant='destructive'
             onClick={handleDelete}

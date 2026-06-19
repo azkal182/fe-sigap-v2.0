@@ -27,6 +27,7 @@ export function RolesProvider({ children }: { children: React.ReactNode }) {
 // eslint-disable-next-line react-refresh/only-export-components
 export const useRolesContext = () => {
   const ctx = React.useContext(RolesContext)
-  if (!ctx) throw new Error('useRolesContext must be used within <RolesProvider>')
+  if (!ctx)
+    throw new Error('useRolesContext must be used within <RolesProvider>')
   return ctx
 }

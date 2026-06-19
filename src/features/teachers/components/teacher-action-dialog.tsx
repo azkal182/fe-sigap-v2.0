@@ -1,13 +1,13 @@
 'use client'
 
 import { useEffect } from 'react'
+import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { Switch } from '@/components/ui/switch'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Dialog,
   DialogContent,
@@ -25,9 +25,9 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Switch } from '@/components/ui/switch'
 import { useDormitories } from '@/features/users/hooks/use-users'
 import { useCreateTeacher, useUpdateTeacher } from '../hooks/use-teachers'
 import type { Teacher } from '../services/teacher-service'
@@ -56,7 +56,9 @@ export function TeacherActionDialog({
   const create = useCreateTeacher()
   const update = useUpdateTeacher()
 
-  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({ limit: 100 })
+  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({
+    limit: 100,
+  })
   const dormitories = dormitoriesData?.data ?? []
 
   const form = useForm<FormValues>({
@@ -76,7 +78,7 @@ export function TeacherActionDialog({
     } else {
       form.reset({ name: '', phone: '', dormitoryIds: [], isActive: true })
     }
-  }, [open, isEdit, teacher])
+  }, [open, isEdit, teacher, form])
 
   const onSubmit = async (values: FormValues) => {
     const payload = {
@@ -208,7 +210,9 @@ export function TeacherActionDialog({
                 render={({ field }) => (
                   <FormItem className='flex items-center justify-between rounded-lg border p-3'>
                     <div>
-                      <FormLabel className='text-sm font-medium'>Active</FormLabel>
+                      <FormLabel className='text-sm font-medium'>
+                        Active
+                      </FormLabel>
                       <p className='text-xs text-muted-foreground'>
                         Inactive teachers cannot be assigned to schedules
                       </p>
@@ -225,7 +229,11 @@ export function TeacherActionDialog({
             )}
 
             <DialogFooter className='pt-2'>
-              <Button variant='outline' type='button' onClick={() => onOpenChange(false)}>
+              <Button
+                variant='outline'
+                type='button'
+                onClick={() => onOpenChange(false)}
+              >
                 Cancel
               </Button>
               <Button type='submit' disabled={isPending}>

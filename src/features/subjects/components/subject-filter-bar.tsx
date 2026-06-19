@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -8,12 +9,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useDormitories } from '@/features/users/hooks/use-users'
 import { useTracksByDormitory } from '@/features/classrooms/hooks/use-classrooms'
-import type { Dormitory } from '@/features/users/services/permission-service'
 import type { Track } from '@/features/classrooms/services/classroom-service'
+import { useDormitories } from '@/features/users/hooks/use-users'
+import type { Dormitory } from '@/features/users/services/permission-service'
 
 export type SubjectFilter = {
   dormitoryId: string | undefined
@@ -28,20 +28,33 @@ type SubjectFilterBarProps = {
 }
 
 export function SubjectFilterBar({ value, onChange }: SubjectFilterBarProps) {
-  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({ limit: 100 })
+  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({
+    limit: 100,
+  })
   const dormitories = dormitoriesData?.data ?? []
 
-  const { data: tracksData, isLoading: isLoadingTrack } = useTracksByDormitory(value.dormitoryId)
+  const { data: tracksData, isLoading: isLoadingTrack } = useTracksByDormitory(
+    value.dormitoryId
+  )
   const tracks = tracksData?.data ?? []
 
   const handleDormitoryChange = (dormitoryId: string) => {
     const dorm = dormitories.find((d) => d.id === dormitoryId)
-    onChange({ dormitoryId, trackId: undefined, dormitory: dorm, track: undefined })
+    onChange({
+      dormitoryId,
+      trackId: undefined,
+      dormitory: dorm,
+      track: undefined,
+    })
   }
 
   const handleTrackChange = (trackId: string) => {
     const track = tracks.find((t) => t.id === trackId)
-    onChange({ ...value, trackId: trackId === 'all' ? undefined : trackId, track: trackId === 'all' ? undefined : track })
+    onChange({
+      ...value,
+      trackId: trackId === 'all' ? undefined : trackId,
+      track: trackId === 'all' ? undefined : track,
+    })
   }
 
   // Reset track if dormitory changes and track no longer belongs to it
@@ -52,7 +65,7 @@ export function SubjectFilterBar({ value, onChange }: SubjectFilterBarProps) {
         onChange({ ...value, trackId: undefined, track: undefined })
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
 
   return (
@@ -63,7 +76,10 @@ export function SubjectFilterBar({ value, onChange }: SubjectFilterBarProps) {
         {isLoadingDorm ? (
           <Skeleton className='h-9 w-48' />
         ) : (
-          <Select value={value.dormitoryId ?? ''} onValueChange={handleDormitoryChange}>
+          <Select
+            value={value.dormitoryId ?? ''}
+            onValueChange={handleDormitoryChange}
+          >
             <SelectTrigger className='h-9 w-48'>
               <SelectValue placeholder='Select dormitory…' />
             </SelectTrigger>

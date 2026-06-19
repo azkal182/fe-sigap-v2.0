@@ -1,6 +1,5 @@
 'use client'
 
-
 import { Loader2, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import {
@@ -46,12 +45,16 @@ export function SubjectDeleteDialog({
           <AlertDialogTitle>Delete Subject</AlertDialogTitle>
           <AlertDialogDescription>
             Are you sure you want to delete{' '}
-            <span className='font-semibold text-foreground'>{subject.name}</span>?
-            This action cannot be undone.
+            <span className='font-semibold text-foreground'>
+              {subject.name}
+            </span>
+            ? This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deleteSubject.isPending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={deleteSubject.isPending}>
+            Cancel
+          </AlertDialogCancel>
           <Button
             variant='destructive'
             onClick={handleDelete}

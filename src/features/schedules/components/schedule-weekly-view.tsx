@@ -12,9 +12,8 @@ import {
   User,
   BookOpen,
 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -22,11 +21,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import { useSchedules } from '../hooks/use-schedules'
+import type { Schedule } from '../services/schedule-service'
 import { ScheduleActionDialog } from './schedule-action-dialog'
 import { ScheduleDeactivateDialog } from './schedule-deactivate-dialog'
 import type { ScheduleFilter } from './schedule-filter-bar'
-import type { Schedule } from '../services/schedule-service'
 
 // Indonesia day names ordered Mon→Sun for school schedule
 const DAYS: { value: number; label: string; short: string }[] = [
@@ -34,7 +34,7 @@ const DAYS: { value: number; label: string; short: string }[] = [
   { value: 2, label: 'Selasa', short: 'Sel' },
   { value: 3, label: 'Rabu', short: 'Rab' },
   { value: 4, label: 'Kamis', short: 'Kam' },
-  { value: 5, label: "Jum'at", short: "Jum" },
+  { value: 5, label: "Jum'at", short: 'Jum' },
   { value: 6, label: 'Sabtu', short: 'Sab' },
   { value: 0, label: 'Minggu', short: 'Min' },
 ]
@@ -96,15 +96,18 @@ export function ScheduleWeeklyView({ filter }: ScheduleWeeklyViewProps) {
                   </Badge>
                 )}
                 {isFetching && !isLoading && (
-                  <Loader2 size={13} className='animate-spin text-muted-foreground' />
+                  <Loader2
+                    size={13}
+                    className='animate-spin text-muted-foreground'
+                  />
                 )}
               </CardTitle>
               <CardDescription className='mt-0.5'>
                 {filter.classroom
                   ? `Active schedule for ${filter.classroom.name}`
                   : filter.dormitory
-                  ? `All classes in ${filter.dormitory.name}`
-                  : 'Select a dormitory to view schedules'}
+                    ? `All classes in ${filter.dormitory.name}`
+                    : 'Select a dormitory to view schedules'}
               </CardDescription>
             </div>
 
@@ -146,7 +149,9 @@ export function ScheduleWeeklyView({ filter }: ScheduleWeeklyViewProps) {
                   {/* Day header */}
                   <div className='mb-3 flex items-center gap-3'>
                     <div className='flex h-7 w-14 items-center justify-center rounded-md bg-primary/10'>
-                      <span className='text-xs font-bold text-primary'>{day.short}</span>
+                      <span className='text-xs font-bold text-primary'>
+                        {day.short}
+                      </span>
                     </div>
                     <span className='text-sm font-semibold'>{day.label}</span>
                     <Badge variant='outline' className='h-5 px-1.5 text-[10px]'>
@@ -161,8 +166,12 @@ export function ScheduleWeeklyView({ filter }: ScheduleWeeklyViewProps) {
                       <ScheduleCard
                         key={s.id}
                         schedule={s}
-                        onEdit={() => setActionDialog({ open: true, schedule: s })}
-                        onDeactivate={() => setDeactivateDialog({ open: true, schedule: s })}
+                        onEdit={() =>
+                          setActionDialog({ open: true, schedule: s })
+                        }
+                        onDeactivate={() =>
+                          setDeactivateDialog({ open: true, schedule: s })
+                        }
                       />
                     ))}
                   </div>
@@ -221,7 +230,7 @@ function ScheduleCard({
       {/* Subject */}
       <div className='flex items-start gap-1.5'>
         <BookMarked size={13} className='mt-0.5 shrink-0 text-primary' />
-        <p className='text-sm font-semibold leading-tight'>
+        <p className='text-sm leading-tight font-semibold'>
           {schedule.subject?.name ?? 'Unknown subject'}
         </p>
       </div>
@@ -267,7 +276,13 @@ function ScheduleCard({
 
 // ─── Empty State ──────────────────────────────────────────────────────────────
 
-function EmptyState({ message, action }: { message: string; action?: React.ReactNode }) {
+function EmptyState({
+  message,
+  action,
+}: {
+  message: string
+  action?: React.ReactNode
+}) {
   return (
     <div className='flex flex-col items-center gap-3 py-16 text-center'>
       <CalendarDays size={40} className='text-muted-foreground/40' />

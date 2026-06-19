@@ -2,6 +2,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   trackService,
   classroomService,
+  studentHistoryService,
+  scheduleService,
   type TrackListParams,
   type ClassroomListParams,
   type CreateClassroomDto,
@@ -36,14 +38,16 @@ export function useClassrooms(params?: ClassroomListParams) {
   return useQuery({
     queryKey: ['classrooms', params],
     // Always include details so we get track, dormitory, counts in list view
-    queryFn: () => classroomService.getClassrooms({ ...params, includeDetails: true }),
+    queryFn: () =>
+      classroomService.getClassrooms({ ...params, includeDetails: true }),
   })
 }
 
 export function useCreateClassroom() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: CreateClassroomDto) => classroomService.createClassroom(data),
+    mutationFn: (data: CreateClassroomDto) =>
+      classroomService.createClassroom(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['classrooms'] }),
   })
 }
@@ -67,12 +71,10 @@ export function useDeleteClassroom() {
 
 // ─── Student histories in a class ────────────────────────────────────────────
 
-import {
-  studentHistoryService,
-  scheduleService,
-} from '../services/classroom-service'
-
-export function useClassStudents(classId: string | undefined, status?: 'STUDYING' | 'CLASS_TRANSFER' | 'TRACK_GRADUATED') {
+export function useClassStudents(
+  classId: string | undefined,
+  status?: 'STUDYING' | 'CLASS_TRANSFER' | 'TRACK_GRADUATED'
+) {
   return useQuery({
     queryKey: ['class-students', classId, status],
     queryFn: () =>
@@ -101,4 +103,3 @@ export function useClassSchedules(classId: string | undefined) {
     enabled: !!classId,
   })
 }
-

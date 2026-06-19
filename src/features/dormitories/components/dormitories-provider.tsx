@@ -11,9 +11,15 @@ type DormitoriesContextType = {
   setCurrentRow: React.Dispatch<React.SetStateAction<Dormitory | null>>
 }
 
-const DormitoriesContext = React.createContext<DormitoriesContextType | null>(null)
+const DormitoriesContext = React.createContext<DormitoriesContextType | null>(
+  null
+)
 
-export function DormitoriesProvider({ children }: { children: React.ReactNode }) {
+export function DormitoriesProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const [open, setOpen] = useDialogState<DormitoriesDialogType>(null)
   const [currentRow, setCurrentRow] = useState<Dormitory | null>(null)
 

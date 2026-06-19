@@ -1,12 +1,13 @@
 import { useMemo } from 'react'
-import { dormitoryService } from '@/features/users/services/permission-service'
 import { useQuery } from '@tanstack/react-query'
+import { dormitoryService } from '@/features/users/services/permission-service'
 
 /** Fetch all active dormitories and return as SelectDropdown-compatible options */
 export function useDormitoryOptions() {
   const { data } = useQuery({
     queryKey: ['dormitories', { limit: 100, isActive: true }],
-    queryFn: () => dormitoryService.getDormitories({ limit: 100, isActive: true }),
+    queryFn: () =>
+      dormitoryService.getDormitories({ limit: 100, isActive: true }),
     staleTime: 30 * 1000,
   })
 

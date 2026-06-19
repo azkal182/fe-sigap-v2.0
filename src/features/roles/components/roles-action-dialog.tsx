@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { getApiErrorMessage } from '@/lib/api-response'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -24,8 +25,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { type Role } from '../services/role-service'
 import { useCreateRole, useUpdateRole } from '../hooks/use-roles'
+import { type Role } from '../services/role-service'
 
 const formSchema = z.object({
   name: z.string().min(1, 'Role name is required.').max(50),
@@ -69,8 +70,8 @@ export function RolesActionDialog({
       }
       form.reset()
       onOpenChange(false)
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Failed to save role')
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, 'Failed to save role'))
     }
   }
 

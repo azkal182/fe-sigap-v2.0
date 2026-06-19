@@ -57,7 +57,7 @@ export const rolesColumns: ColumnDef<Role>[] = [
       <DataTableColumnHeader column={column} title='Description' />
     ),
     cell: ({ row }) => (
-      <span className='text-muted-foreground text-sm'>
+      <span className='text-sm text-muted-foreground'>
         {row.getValue('description') || '—'}
       </span>
     ),
@@ -92,9 +92,7 @@ export const rolesColumns: ColumnDef<Role>[] = [
     ),
     cell: ({ row }) => {
       const count = row.original.permissions?.length ?? 0
-      return (
-        <Badge variant='secondary'>{count}</Badge>
-      )
+      return <Badge variant='secondary'>{count}</Badge>
     },
     enableSorting: false,
   },

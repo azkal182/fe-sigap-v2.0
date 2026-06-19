@@ -57,8 +57,9 @@ export function DataTableFacetedFilter<TData, TValue>({
 }: DataTableFacetedFilterProps<TData, TValue>) {
   // Support both controlled (external) and column-driven modes
   const facets = column?.getFacetedUniqueValues()
-  const selectedValues: Set<string> = externalSelectedValues
-    ?? new Set(column?.getFilterValue() as string[] | undefined)
+  const selectedValues: Set<string> =
+    externalSelectedValues ??
+    new Set(column?.getFilterValue() as string[] | undefined)
 
   const handleSelect = (value: string) => {
     if (onSelect) {

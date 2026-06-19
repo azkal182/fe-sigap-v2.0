@@ -11,7 +11,8 @@ import {
 export function useSubjects(params?: SubjectListParams) {
   return useQuery({
     queryKey: ['subjects', params],
-    queryFn: () => subjectService.getSubjects({ ...params, includeDetails: true }),
+    queryFn: () =>
+      subjectService.getSubjects({ ...params, includeDetails: true }),
   })
 }
 

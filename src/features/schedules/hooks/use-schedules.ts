@@ -44,7 +44,10 @@ export function useScheduleSlots(params?: ScheduleSlotListParams) {
 /** All slots for a given dormitory — for form selects, sorted by slot number */
 export function useScheduleSlotsByDormitory(dormitoryId: string | undefined) {
   return useQuery({
-    queryKey: ['schedule-slots', { dormitoryId, limit: 100, sortBy: 'slot', sortOrder: 'asc' }],
+    queryKey: [
+      'schedule-slots',
+      { dormitoryId, limit: 100, sortBy: 'slot', sortOrder: 'asc' },
+    ],
     queryFn: () =>
       scheduleSlotService.getScheduleSlots({
         dormitoryId,
@@ -71,7 +74,8 @@ export function useSchedules(params?: ScheduleListParams, enabled = true) {
 export function useCreateSchedule() {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: (data: CreateScheduleDto) => scheduleService.createSchedule(data),
+    mutationFn: (data: CreateScheduleDto) =>
+      scheduleService.createSchedule(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['schedules'] }),
   })
 }

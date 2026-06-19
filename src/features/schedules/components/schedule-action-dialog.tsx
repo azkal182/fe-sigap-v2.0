@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -23,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -30,11 +31,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useDormitories } from '@/features/users/hooks/use-users'
 import { useClassrooms } from '@/features/classrooms/hooks/use-classrooms'
 import { useSubjects } from '@/features/subjects/hooks/use-subjects'
+import { useDormitories } from '@/features/users/hooks/use-users'
 import {
   useTeachersByDormitory,
   useScheduleSlotsByDormitory,
@@ -72,6 +72,11 @@ type ScheduleActionDialogProps = {
   defaultDormitoryId?: string
 }
 
+type DormitorySelection = {
+  key: string
+  id: string
+}
+
 export function ScheduleActionDialog({
   open,
   onOpenChange,
@@ -86,10 +91,15 @@ export function ScheduleActionDialog({
   // ── Internal dormitory state (UI helper — not sent to API) ──────────────────
   // When editing, derive dormitory from schedule.class.dormitoryId
   const editDormitoryId = isEdit ? schedule?.class?.dormitoryId : undefined
+  const dormitorySelectionKey = `${schedule?.id ?? 'new'}:${defaultDormitoryId ?? ''}`
+  const initialDormitoryId = editDormitoryId ?? defaultDormitoryId ?? ''
 
-  const [selectedDormitoryId, setSelectedDormitoryId] = useState<string>(
-    editDormitoryId ?? defaultDormitoryId ?? ''
-  )
+  const [dormitorySelection, setDormitorySelection] =
+    useState<DormitorySelection | null>(null)
+  const selectedDormitoryId =
+    dormitorySelection?.key === dormitorySelectionKey
+      ? dormitorySelection.id
+      : initialDormitoryId
 
   // ── Form ────────────────────────────────────────────────────────────────────
   const form = useForm<FormValues>({
@@ -104,7 +114,9 @@ export function ScheduleActionDialog({
   })
 
   // ── Reference data ──────────────────────────────────────────────────────────
-  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({ limit: 100 })
+  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({
+    limit: 100,
+  })
   const dormitories = dormitoriesData?.data ?? []
 
   const { data: classesData, isLoading: isLoadingClasses } = useClassrooms({
@@ -122,14 +134,12 @@ export function ScheduleActionDialog({
   })
   const subjects = subjectsData?.data ?? []
 
-  const { data: teachersData, isLoading: isLoadingTeachers } = useTeachersByDormitory(
-    selectedDormitoryId || undefined
-  )
+  const { data: teachersData, isLoading: isLoadingTeachers } =
+    useTeachersByDormitory(selectedDormitoryId || undefined)
   const teachers = teachersData?.data ?? []
 
-  const { data: slotsData, isLoading: isLoadingSlots } = useScheduleSlotsByDormitory(
-    selectedDormitoryId || undefined
-  )
+  const { data: slotsData, isLoading: isLoadingSlots } =
+    useScheduleSlotsByDormitory(selectedDormitoryId || undefined)
   const slots = slotsData?.data ?? []
 
   // ── Sync form state when dialog opens ───────────────────────────────────────
@@ -138,8 +148,6 @@ export function ScheduleActionDialog({
 
     if (isEdit && schedule) {
       // Edit mode: restore all values from existing schedule
-      const dormId = schedule.class?.dormitoryId ?? defaultDormitoryId ?? ''
-      setSelectedDormitoryId(dormId)
       form.reset({
         classId: schedule.classId,
         subjectId: schedule.subjectId,
@@ -149,7 +157,6 @@ export function ScheduleActionDialog({
       })
     } else {
       // Create mode: use active filter as defaults
-      setSelectedDormitoryId(defaultDormitoryId ?? '')
       form.reset({
         classId: defaultClassId ?? '',
         subjectId: '',
@@ -158,11 +165,11 @@ export function ScheduleActionDialog({
         dayOfWeek: '',
       })
     }
-  }, [open, isEdit, schedule, defaultClassId, defaultDormitoryId])
+  }, [open, isEdit, schedule, defaultClassId, form])
 
   // ── Handlers ────────────────────────────────────────────────────────────────
   const handleDormitoryChange = (dormId: string) => {
-    setSelectedDormitoryId(dormId)
+    setDormitorySelection({ key: dormitorySelectionKey, id: dormId })
     // Reset class when dormitory changes
     form.setValue('classId', '')
   }
@@ -215,7 +222,6 @@ export function ScheduleActionDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-3'>
-
             {/* ── Dormitory helper (UI only, not submitted) ── */}
             <div className='flex flex-col gap-1.5'>
               <Label className='text-sm font-medium'>
@@ -267,8 +273,8 @@ export function ScheduleActionDialog({
                             !selectedDormitoryId
                               ? 'Select dormitory first'
                               : isLoadingClasses
-                              ? 'Loading…'
-                              : 'Select class…'
+                                ? 'Loading…'
+                                : 'Select class…'
                           }
                         />
                       </SelectTrigger>
@@ -336,8 +342,8 @@ export function ScheduleActionDialog({
                               !selectedDormitoryId
                                 ? 'Select dormitory first'
                                 : isLoadingSlots
-                                ? 'Loading…'
-                                : 'Select slot…'
+                                  ? 'Loading…'
+                                  : 'Select slot…'
                             }
                           />
                         </SelectTrigger>
@@ -372,7 +378,9 @@ export function ScheduleActionDialog({
                       <SelectTrigger>
                         <SelectValue
                           placeholder={
-                            !selectedDormitoryId ? 'Select dormitory first' : 'Select subject…'
+                            !selectedDormitoryId
+                              ? 'Select dormitory first'
+                              : 'Select subject…'
                           }
                         />
                       </SelectTrigger>
@@ -414,8 +422,8 @@ export function ScheduleActionDialog({
                             !selectedDormitoryId
                               ? 'Select dormitory first'
                               : isLoadingTeachers
-                              ? 'Loading…'
-                              : 'Select teacher…'
+                                ? 'Loading…'
+                                : 'Select teacher…'
                           }
                         />
                       </SelectTrigger>
@@ -434,7 +442,11 @@ export function ScheduleActionDialog({
             />
 
             <DialogFooter className='pt-2'>
-              <Button variant='outline' type='button' onClick={() => onOpenChange(false)}>
+              <Button
+                variant='outline'
+                type='button'
+                onClick={() => onOpenChange(false)}
+              >
                 Cancel
               </Button>
               <Button type='submit' disabled={isPending}>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -8,12 +9,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useDormitories } from '@/features/users/hooks/use-users'
 import { useClassrooms } from '@/features/classrooms/hooks/use-classrooms'
-import type { Dormitory } from '@/features/users/services/permission-service'
 import type { Classroom } from '@/features/classrooms/services/classroom-service'
+import { useDormitories } from '@/features/users/hooks/use-users'
+import type { Dormitory } from '@/features/users/services/permission-service'
 
 export type ScheduleFilter = {
   dormitoryId: string | undefined
@@ -28,7 +28,9 @@ type ScheduleFilterBarProps = {
 }
 
 export function ScheduleFilterBar({ value, onChange }: ScheduleFilterBarProps) {
-  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({ limit: 100 })
+  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({
+    limit: 100,
+  })
   const dormitories = dormitoriesData?.data ?? []
 
   const { data: classesData, isLoading: isLoadingClass } = useClassrooms({
@@ -41,21 +43,31 @@ export function ScheduleFilterBar({ value, onChange }: ScheduleFilterBarProps) {
 
   const handleDormitoryChange = (dormitoryId: string) => {
     const dorm = dormitories.find((d) => d.id === dormitoryId)
-    onChange({ dormitoryId, classId: undefined, dormitory: dorm, classroom: undefined })
+    onChange({
+      dormitoryId,
+      classId: undefined,
+      dormitory: dorm,
+      classroom: undefined,
+    })
   }
 
   const handleClassChange = (classId: string) => {
     const cls = classes.find((c) => c.id === classId)
-    onChange({ ...value, classId: classId === 'all' ? undefined : classId, classroom: classId === 'all' ? undefined : cls })
+    onChange({
+      ...value,
+      classId: classId === 'all' ? undefined : classId,
+      classroom: classId === 'all' ? undefined : cls,
+    })
   }
 
   // Reset class if dormitory changes and class no longer belongs to it
   useEffect(() => {
     if (value.classId && classes.length > 0) {
       const found = classes.find((c) => c.id === value.classId)
-      if (!found) onChange({ ...value, classId: undefined, classroom: undefined })
+      if (!found)
+        onChange({ ...value, classId: undefined, classroom: undefined })
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [classes])
 
   return (
@@ -66,7 +78,10 @@ export function ScheduleFilterBar({ value, onChange }: ScheduleFilterBarProps) {
         {isLoadingDorm ? (
           <Skeleton className='h-9 w-48' />
         ) : (
-          <Select value={value.dormitoryId ?? ''} onValueChange={handleDormitoryChange}>
+          <Select
+            value={value.dormitoryId ?? ''}
+            onValueChange={handleDormitoryChange}
+          >
             <SelectTrigger className='h-9 w-48'>
               <SelectValue placeholder='Select dormitory…' />
             </SelectTrigger>

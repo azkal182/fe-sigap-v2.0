@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { KeyRound, Loader2, ShieldCheck, ShieldOff } from 'lucide-react'
 import { toast } from 'sonner'
+import { getApiErrorMessage } from '@/lib/api-response'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -17,13 +18,13 @@ import {
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
-import { type User } from '../services/user-service'
 import {
   useAllPermissions,
   useUserPermissions,
   useAssignUserPermissions,
   useRemoveUserPermission,
 } from '../hooks/use-users'
+import { type User } from '../services/user-service'
 
 type UsersPermissionsDialogProps = {
   open: boolean
@@ -39,11 +40,13 @@ export function UsersPermissionsDialog({
   const [search, setSearch] = useState('')
 
   // All available system permissions
-  const { data: allPermissions = [], isLoading: isLoadingAll } = useAllPermissions()
+  const { data: allPermissions = [], isLoading: isLoadingAll } =
+    useAllPermissions()
 
   // Direct permissions assigned to this user via GET /users/:id/permissions
   // API returns: Permission[] (flat array of directly assigned permissions)
-  const { data: directPermsData, isLoading: isLoadingDirect } = useUserPermissions(currentRow.id)
+  const { data: directPermsData, isLoading: isLoadingDirect } =
+    useUserPermissions(currentRow.id)
 
   const assignMutation = useAssignUserPermissions()
   const removeMutation = useRemoveUserPermission()
@@ -81,12 +84,15 @@ export function UsersPermissionsDialog({
         p.resource.toLowerCase().includes(q) ||
         (p.action ?? '').toLowerCase().includes(q)
     )
-    return filtered.reduce<Record<string, typeof allPermissions>>((acc, perm) => {
-      const key = perm.resource
-      if (!acc[key]) acc[key] = []
-      acc[key].push(perm)
-      return acc
-    }, {})
+    return filtered.reduce<Record<string, typeof allPermissions>>(
+      (acc, perm) => {
+        const key = perm.resource
+        if (!acc[key]) acc[key] = []
+        acc[key].push(perm)
+        return acc
+      },
+      {}
+    )
   }, [allPermissions, search])
 
   const handleToggle = async (
@@ -101,8 +107,8 @@ export function UsersPermissionsDialog({
           dto: { permissionIds: [permissionId] },
         })
         toast.success(`Permission "${permissionName}" assigned`)
-      } catch (err: any) {
-        toast.error(err?.response?.data?.message || 'Failed to assign permission')
+      } catch (error: unknown) {
+        toast.error(getApiErrorMessage(error, 'Failed to assign permission'))
       }
     } else {
       try {
@@ -111,8 +117,8 @@ export function UsersPermissionsDialog({
           permissionId,
         })
         toast.success(`Permission "${permissionName}" removed`)
-      } catch (err: any) {
-        toast.error(err?.response?.data?.message || 'Failed to remove permission')
+      } catch (error: unknown) {
+        toast.error(getApiErrorMessage(error, 'Failed to remove permission'))
       }
     }
   }
@@ -143,10 +149,16 @@ export function UsersPermissionsDialog({
 
         {/* Legend + counters */}
         <div className='flex flex-wrap items-center gap-2 text-xs text-muted-foreground'>
-          <Badge variant='outline' className='gap-1 border-green-600 text-green-600'>
+          <Badge
+            variant='outline'
+            className='gap-1 border-green-600 text-green-600'
+          >
             <ShieldCheck size={11} /> From role ({totalFromRole})
           </Badge>
-          <Badge variant='outline' className='gap-1 border-blue-600 text-blue-600'>
+          <Badge
+            variant='outline'
+            className='gap-1 border-blue-600 text-blue-600'
+          >
             <ShieldOff size={11} /> Direct ({totalDirect})
           </Badge>
           {isLoadingDirect && (
@@ -173,7 +185,7 @@ export function UsersPermissionsDialog({
           ) : (
             Object.entries(grouped).map(([resource, perms]) => (
               <div key={resource} className='mb-3'>
-                <p className='mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground'>
+                <p className='mb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase'>
                   {resource}
                 </p>
                 <div className='space-y-1'>
@@ -200,7 +212,7 @@ export function UsersPermissionsDialog({
                         {isFromRole && (
                           <Badge
                             variant='outline'
-                            className='h-4 px-1 text-[10px] border-green-600 text-green-600'
+                            className='h-4 border-green-600 px-1 text-[10px] text-green-600'
                           >
                             role
                           </Badge>
@@ -208,7 +220,7 @@ export function UsersPermissionsDialog({
                         {isDirect && (
                           <Badge
                             variant='outline'
-                            className='h-4 px-1 text-[10px] border-blue-600 text-blue-600'
+                            className='h-4 border-blue-600 px-1 text-[10px] text-blue-600'
                           >
                             direct
                           </Badge>

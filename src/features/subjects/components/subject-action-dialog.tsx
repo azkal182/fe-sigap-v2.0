@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useForm, useWatch } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -72,11 +72,13 @@ export function SubjectActionDialog({
     },
   })
 
-  const dormitoryId = form.watch('dormitoryId')
+  const dormitoryId = useWatch({ control: form.control, name: 'dormitoryId' })
   const { data: dormitoriesData } = useDormitories({ limit: 100 })
   const dormitories = dormitoriesData?.data ?? []
 
-  const { data: tracksData, isLoading: isLoadingTracks } = useTracksByDormitory(dormitoryId || undefined)
+  const { data: tracksData, isLoading: isLoadingTracks } = useTracksByDormitory(
+    dormitoryId || undefined
+  )
   const tracks = tracksData?.data ?? []
 
   // When switching to edit mode, populate form from subject data
@@ -96,10 +98,13 @@ export function SubjectActionDialog({
         })
       }
     }
-  }, [open, isEdit, subject, defaultDormitoryId, defaultTrackId])
+  }, [open, isEdit, subject, defaultDormitoryId, defaultTrackId, form])
 
   // When dormitory changes, reset trackId
-  const handleDormitoryChange = (value: string, fieldOnChange: (v: string) => void) => {
+  const handleDormitoryChange = (
+    value: string,
+    fieldOnChange: (v: string) => void
+  ) => {
     fieldOnChange(value)
     form.setValue('trackId', '')
   }
@@ -113,7 +118,10 @@ export function SubjectActionDialog({
         })
         toast.success(`Subject "${values.name}" updated.`)
       } else {
-        await createSubject.mutateAsync({ name: values.name, trackId: values.trackId })
+        await createSubject.mutateAsync({
+          name: values.name,
+          trackId: values.trackId,
+        })
         toast.success(`Subject "${values.name}" created.`)
       }
       onOpenChange(false)
@@ -162,7 +170,9 @@ export function SubjectActionDialog({
                   <FormLabel>Dormitory</FormLabel>
                   <Select
                     value={field.value}
-                    onValueChange={(v) => handleDormitoryChange(v, field.onChange)}
+                    onValueChange={(v) =>
+                      handleDormitoryChange(v, field.onChange)
+                    }
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -204,8 +214,8 @@ export function SubjectActionDialog({
                             !dormitoryId
                               ? 'Select dormitory first'
                               : isLoadingTracks
-                              ? 'Loading…'
-                              : 'Select track…'
+                                ? 'Loading…'
+                                : 'Select track…'
                           }
                         />
                       </SelectTrigger>
@@ -227,7 +237,11 @@ export function SubjectActionDialog({
             />
 
             <DialogFooter>
-              <Button variant='outline' type='button' onClick={() => onOpenChange(false)}>
+              <Button
+                variant='outline'
+                type='button'
+                onClick={() => onOpenChange(false)}
+              >
                 Cancel
               </Button>
               <Button type='submit' disabled={isPending}>

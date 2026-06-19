@@ -3,7 +3,9 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { getApiErrorMessage } from '@/lib/api-response'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -24,9 +26,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { type User } from '../services/user-service'
 import { useRoles, useCreateUser, useUpdateUser } from '../hooks/use-users'
-import { Loader2 } from 'lucide-react'
+import { type UpdateUserDto, type User } from '../services/user-service'
 
 const formSchema = z
   .object({
@@ -73,9 +74,11 @@ export function UsersActionDialog({
   onOpenChange,
 }: UserActionDialogProps) {
   const isEdit = !!currentRow
-  
+
   // Fetch roles to populate dropdown
-  const { data: rolesData, isLoading: isLoadingRoles } = useRoles({ limit: 100 })
+  const { data: rolesData, isLoading: isLoadingRoles } = useRoles({
+    limit: 100,
+  })
   const roles = rolesData?.data || []
 
   const createUser = useCreateUser()
@@ -106,7 +109,7 @@ export function UsersActionDialog({
     try {
       if (isEdit && currentRow) {
         // Prepare update payload
-        const payload: any = {
+        const payload: UpdateUserDto = {
           name: values.name,
           email: values.email,
           roleId: values.roleId,
@@ -127,8 +130,8 @@ export function UsersActionDialog({
       }
       form.reset()
       onOpenChange(false)
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to save user')
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, 'Failed to save user'))
     }
   }
 
@@ -163,9 +166,7 @@ export function UsersActionDialog({
                 name='name'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>
-                      Name
-                    </FormLabel>
+                    <FormLabel className='col-span-2 text-end'>Name</FormLabel>
                     <FormControl>
                       <Input
                         placeholder='John Doe'
@@ -202,7 +203,7 @@ export function UsersActionDialog({
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>Role</FormLabel>
                     {isLoadingRoles ? (
-                      <div className="col-span-4 flex items-center h-10 px-3 py-2 border rounded-md bg-muted text-muted-foreground text-sm">
+                      <div className='col-span-4 flex h-10 items-center rounded-md border bg-muted px-3 py-2 text-sm text-muted-foreground'>
                         Loading roles...
                       </div>
                     ) : (
@@ -211,10 +212,10 @@ export function UsersActionDialog({
                         onValueChange={field.onChange}
                         placeholder='Select a role'
                         className='col-span-4'
-                        items={roles.map((r: any) => ({
-                           label: r.name,
-                           value: r.id,
-                         }))}
+                        items={roles.map((r) => ({
+                          label: r.name,
+                          value: r.id,
+                        }))}
                       />
                     )}
                     <FormMessage className='col-span-4 col-start-3' />
@@ -227,11 +228,18 @@ export function UsersActionDialog({
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>
-                      Password {isEdit && <span className="text-muted-foreground text-xs block">(leave blank to keep)</span>}
+                      Password{' '}
+                      {isEdit && (
+                        <span className='block text-xs text-muted-foreground'>
+                          (leave blank to keep)
+                        </span>
+                      )}
                     </FormLabel>
                     <FormControl>
                       <PasswordInput
-                        placeholder={isEdit ? '********' : 'e.g., S3cur3P@ssw0rd'}
+                        placeholder={
+                          isEdit ? '********' : 'e.g., S3cur3P@ssw0rd'
+                        }
                         className='col-span-4'
                         {...field}
                       />
@@ -251,7 +259,9 @@ export function UsersActionDialog({
                     <FormControl>
                       <PasswordInput
                         disabled={!isPasswordTouched}
-                        placeholder={isEdit ? '********' : 'e.g., S3cur3P@ssw0rd'}
+                        placeholder={
+                          isEdit ? '********' : 'e.g., S3cur3P@ssw0rd'
+                        }
                         className='col-span-4'
                         {...field}
                       />

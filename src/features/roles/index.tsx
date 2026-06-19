@@ -7,11 +7,10 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { useRoles } from './hooks/use-roles'
 import { RolesDialogs } from './components/roles-dialogs'
-import { RolesProvider } from './components/roles-provider'
+import { RolesProvider, useRolesContext } from './components/roles-provider'
 import { RolesTable } from './components/roles-table'
-import { useRolesContext } from './components/roles-provider'
+import { useRoles } from './hooks/use-roles'
 
 const route = getRouteApi('/_authenticated/roles/')
 

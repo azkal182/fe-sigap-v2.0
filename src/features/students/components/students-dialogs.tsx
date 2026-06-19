@@ -5,15 +5,14 @@ import { useStudentsContext } from './students-provider'
 export function StudentsDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useStudentsContext()
 
-  const handleClose =
-    (dialogType: typeof open) => (state: boolean) => {
-      if (!state) {
-        setOpen(null)
-        setTimeout(() => setCurrentRow(null), 500)
-      } else {
-        setOpen(dialogType)
-      }
+  const handleClose = (dialogType: typeof open) => (state: boolean) => {
+    if (!state) {
+      setOpen(null)
+      setTimeout(() => setCurrentRow(null), 500)
+    } else {
+      setOpen(dialogType)
     }
+  }
 
   return (
     <>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -8,11 +9,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDormitories } from '@/features/users/hooks/use-users'
-import { useTracksByDormitory } from '../hooks/use-classrooms'
 import type { Dormitory } from '@/features/users/services/permission-service'
+import { useTracksByDormitory } from '../hooks/use-classrooms'
 import type { Track } from '../services/classroom-service'
 
 export type ClassroomFilter = {
@@ -27,17 +27,29 @@ type ClassroomFilterBarProps = {
   onChange: (filter: ClassroomFilter) => void
 }
 
-export function ClassroomFilterBar({ value, onChange }: ClassroomFilterBarProps) {
-  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({ limit: 100 })
+export function ClassroomFilterBar({
+  value,
+  onChange,
+}: ClassroomFilterBarProps) {
+  const { data: dormitoriesData, isLoading: isLoadingDorm } = useDormitories({
+    limit: 100,
+  })
   const dormitories = dormitoriesData?.data ?? []
 
-  const { data: tracksData, isLoading: isLoadingTrack } = useTracksByDormitory(value.dormitoryId)
+  const { data: tracksData, isLoading: isLoadingTrack } = useTracksByDormitory(
+    value.dormitoryId
+  )
   const tracks = tracksData?.data ?? []
 
   // When dormitory changes, reset track selection
   const handleDormitoryChange = (dormitoryId: string) => {
     const dorm = dormitories.find((d) => d.id === dormitoryId)
-    onChange({ dormitoryId, trackId: undefined, dormitory: dorm, track: undefined })
+    onChange({
+      dormitoryId,
+      trackId: undefined,
+      dormitory: dorm,
+      track: undefined,
+    })
   }
 
   // When track changes
@@ -54,7 +66,7 @@ export function ClassroomFilterBar({ value, onChange }: ClassroomFilterBarProps)
         onChange({ ...value, trackId: undefined, track: undefined })
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks])
 
   return (

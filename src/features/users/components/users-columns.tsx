@@ -69,7 +69,15 @@ export const usersColumns: ColumnDef<User>[] = [
       const isActive = row.original.isActive
       return (
         <div className='flex space-x-2'>
-          <Badge variant='outline' className={cn('capitalize', isActive ? 'text-green-600 border-green-600' : 'text-red-600 border-red-600')}>
+          <Badge
+            variant='outline'
+            className={cn(
+              'capitalize',
+              isActive
+                ? 'border-green-600 text-green-600'
+                : 'border-red-600 text-red-600'
+            )}
+          >
             {isActive ? 'Active' : 'Inactive'}
           </Badge>
         </div>

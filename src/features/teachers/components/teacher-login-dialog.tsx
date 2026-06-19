@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { Loader2, KeyRound, UserPlus, Link2, PowerOff } from 'lucide-react'
 import { toast } from 'sonner'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Switch } from '@/components/ui/switch'
 import {
   Dialog,
   DialogContent,
@@ -25,8 +25,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Separator } from '@/components/ui/separator'
 import {
   Select,
   SelectContent,
@@ -34,7 +32,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Badge } from '@/components/ui/badge'
+import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useUsers } from '@/features/users/hooks/use-users'
 import {
   useCreateTeacherLogin,
@@ -64,7 +64,11 @@ const linkUserSchema = z.object({
 
 const editLoginSchema = z.object({
   email: z.string().email('Invalid email').optional().or(z.literal('')),
-  password: z.string().min(6, 'Minimum 6 characters').optional().or(z.literal('')),
+  password: z
+    .string()
+    .min(6, 'Minimum 6 characters')
+    .optional()
+    .or(z.literal('')),
   name: z.string().optional(),
   isActive: z.boolean(),
 })
@@ -81,6 +85,11 @@ type TeacherLoginDialogProps = {
   teacher: Teacher
 }
 
+type ActiveTabState = {
+  teacherId: string
+  value: string
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function TeacherLoginDialog({
@@ -89,11 +98,11 @@ export function TeacherLoginDialog({
   teacher,
 }: TeacherLoginDialogProps) {
   const hasLogin = !!teacher.userId
-  const [activeTab, setActiveTab] = useState<string>('create')
-
-  useEffect(() => {
-    if (open) setActiveTab('create')
-  }, [open])
+  const [activeTabState, setActiveTabState] = useState<ActiveTabState | null>(
+    null
+  )
+  const activeTab =
+    activeTabState?.teacherId === teacher.id ? activeTabState.value : 'create'
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -111,9 +120,17 @@ export function TeacherLoginDialog({
         </DialogHeader>
 
         {hasLogin ? (
-          <EditLoginForm teacher={teacher} onClose={() => onOpenChange(false)} />
+          <EditLoginForm
+            teacher={teacher}
+            onClose={() => onOpenChange(false)}
+          />
         ) : (
-          <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) =>
+              setActiveTabState({ teacherId: teacher.id, value })
+            }
+          >
             <TabsList className='w-full'>
               <TabsTrigger value='create' className='flex-1 gap-1.5'>
                 <UserPlus size={13} />
@@ -126,10 +143,16 @@ export function TeacherLoginDialog({
             </TabsList>
 
             <TabsContent value='create' className='mt-4'>
-              <CreateLoginForm teacher={teacher} onClose={() => onOpenChange(false)} />
+              <CreateLoginForm
+                teacher={teacher}
+                onClose={() => onOpenChange(false)}
+              />
             </TabsContent>
             <TabsContent value='link' className='mt-4'>
-              <LinkUserForm teacher={teacher} onClose={() => onOpenChange(false)} />
+              <LinkUserForm
+                teacher={teacher}
+                onClose={() => onOpenChange(false)}
+              />
             </TabsContent>
           </Tabs>
         )}
@@ -150,14 +173,23 @@ function CreateLoginForm({
   const createLogin = useCreateTeacherLogin()
   const form = useForm<CreateLoginValues>({
     resolver: zodResolver(createLoginSchema),
-    defaultValues: { email: '', password: '', confirmPassword: '', name: teacher.name },
+    defaultValues: {
+      email: '',
+      password: '',
+      confirmPassword: '',
+      name: teacher.name,
+    },
   })
 
   const onSubmit = async (values: CreateLoginValues) => {
     try {
       await createLogin.mutateAsync({
         id: teacher.id,
-        data: { email: values.email, password: values.password, name: values.name },
+        data: {
+          email: values.email,
+          password: values.password,
+          name: values.name,
+        },
       })
       toast.success('Login account created.')
       onClose()
@@ -174,8 +206,15 @@ function CreateLoginForm({
           name='name'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Display Name <span className='text-xs font-normal text-muted-foreground'>(optional)</span></FormLabel>
-              <FormControl><Input placeholder={teacher.name} {...field} /></FormControl>
+              <FormLabel>
+                Display Name{' '}
+                <span className='text-xs font-normal text-muted-foreground'>
+                  (optional)
+                </span>
+              </FormLabel>
+              <FormControl>
+                <Input placeholder={teacher.name} {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -186,7 +225,13 @@ function CreateLoginForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Email</FormLabel>
-              <FormControl><Input type='email' placeholder='teacher@example.com' {...field} /></FormControl>
+              <FormControl>
+                <Input
+                  type='email'
+                  placeholder='teacher@example.com'
+                  {...field}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -197,7 +242,13 @@ function CreateLoginForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
-              <FormControl><Input type='password' placeholder='Min. 6 characters' {...field} /></FormControl>
+              <FormControl>
+                <Input
+                  type='password'
+                  placeholder='Min. 6 characters'
+                  {...field}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -208,15 +259,25 @@ function CreateLoginForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Confirm Password</FormLabel>
-              <FormControl><Input type='password' placeholder='Re-enter password' {...field} /></FormControl>
+              <FormControl>
+                <Input
+                  type='password'
+                  placeholder='Re-enter password'
+                  {...field}
+                />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <DialogFooter className='pt-2'>
-          <Button variant='outline' type='button' onClick={onClose}>Cancel</Button>
+          <Button variant='outline' type='button' onClick={onClose}>
+            Cancel
+          </Button>
           <Button type='submit' disabled={createLogin.isPending}>
-            {createLogin.isPending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+            {createLogin.isPending && (
+              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+            )}
             Create Account
           </Button>
         </DialogFooter>
@@ -235,7 +296,9 @@ function LinkUserForm({
   onClose: () => void
 }) {
   const linkUser = useLinkTeacherUser()
-  const { data: usersData, isLoading: isLoadingUsers } = useUsers({ limit: 100 })
+  const { data: usersData, isLoading: isLoadingUsers } = useUsers({
+    limit: 100,
+  })
   const users = usersData?.data ?? []
 
   const form = useForm<LinkUserValues>({
@@ -245,7 +308,10 @@ function LinkUserForm({
 
   const onSubmit = async (values: LinkUserValues) => {
     try {
-      await linkUser.mutateAsync({ id: teacher.id, data: { userId: values.userId } })
+      await linkUser.mutateAsync({
+        id: teacher.id,
+        data: { userId: values.userId },
+      })
       toast.success('User linked as teacher login.')
       onClose()
     } catch {
@@ -257,7 +323,8 @@ function LinkUserForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-3'>
         <p className='text-xs text-muted-foreground'>
-          Select an existing non-system user to link as this teacher's login account.
+          Select an existing non-system user to link as this teacher's login
+          account.
         </p>
         <FormField
           control={form.control}
@@ -272,14 +339,18 @@ function LinkUserForm({
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={isLoadingUsers ? 'Loading…' : 'Select user…'} />
+                    <SelectValue
+                      placeholder={isLoadingUsers ? 'Loading…' : 'Select user…'}
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {users.map((u) => (
                     <SelectItem key={u.id} value={u.id}>
                       <span>{u.name}</span>
-                      <span className='ms-1.5 text-xs text-muted-foreground'>— {u.email}</span>
+                      <span className='ms-1.5 text-xs text-muted-foreground'>
+                        — {u.email}
+                      </span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -289,9 +360,13 @@ function LinkUserForm({
           )}
         />
         <DialogFooter className='pt-2'>
-          <Button variant='outline' type='button' onClick={onClose}>Cancel</Button>
+          <Button variant='outline' type='button' onClick={onClose}>
+            Cancel
+          </Button>
           <Button type='submit' disabled={linkUser.isPending}>
-            {linkUser.isPending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+            {linkUser.isPending && (
+              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+            )}
             Link User
           </Button>
         </DialogFooter>
@@ -329,7 +404,7 @@ function EditLoginForm({
       name: teacher.user?.name ?? '',
       isActive: teacher.user?.isActive ?? true,
     })
-  }, [teacher])
+  }, [teacher, form])
 
   const onSubmit = async (values: EditLoginValues) => {
     try {
@@ -363,7 +438,7 @@ function EditLoginForm({
     <div className='space-y-4'>
       {/* Current login info */}
       <div className='rounded-md bg-muted/50 px-3 py-2 text-sm'>
-        <p className='text-xs text-muted-foreground mb-1'>Current account</p>
+        <p className='mb-1 text-xs text-muted-foreground'>Current account</p>
         <p className='font-medium'>{teacher.user?.email}</p>
         <div className='mt-1 flex items-center gap-1.5'>
           <Badge
@@ -383,7 +458,9 @@ function EditLoginForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Display Name</FormLabel>
-                <FormControl><Input placeholder='Leave blank to keep current' {...field} /></FormControl>
+                <FormControl>
+                  <Input placeholder='Leave blank to keep current' {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -394,7 +471,13 @@ function EditLoginForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email</FormLabel>
-                <FormControl><Input type='email' placeholder='Leave blank to keep current' {...field} /></FormControl>
+                <FormControl>
+                  <Input
+                    type='email'
+                    placeholder='Leave blank to keep current'
+                    {...field}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -404,8 +487,19 @@ function EditLoginForm({
             name='password'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>New Password <span className='text-xs font-normal text-muted-foreground'>(leave blank to keep)</span></FormLabel>
-                <FormControl><Input type='password' placeholder='Min. 6 characters' {...field} /></FormControl>
+                <FormLabel>
+                  New Password{' '}
+                  <span className='text-xs font-normal text-muted-foreground'>
+                    (leave blank to keep)
+                  </span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    type='password'
+                    placeholder='Min. 6 characters'
+                    {...field}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -415,18 +509,27 @@ function EditLoginForm({
             name='isActive'
             render={({ field }) => (
               <FormItem className='flex items-center justify-between rounded-lg border p-3'>
-                <FormLabel className='text-sm font-medium'>Login Active</FormLabel>
+                <FormLabel className='text-sm font-medium'>
+                  Login Active
+                </FormLabel>
                 <FormControl>
-                  <Switch checked={field.value} onCheckedChange={field.onChange} />
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
                 </FormControl>
               </FormItem>
             )}
           />
 
           <DialogFooter className='pt-2'>
-            <Button variant='outline' type='button' onClick={onClose}>Cancel</Button>
+            <Button variant='outline' type='button' onClick={onClose}>
+              Cancel
+            </Button>
             <Button type='submit' disabled={update.isPending}>
-              {update.isPending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+              {update.isPending && (
+                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+              )}
               Save Changes
             </Button>
           </DialogFooter>
@@ -438,7 +541,9 @@ function EditLoginForm({
       {/* Danger zone */}
       <div className='flex items-center justify-between'>
         <div>
-          <p className='text-sm font-medium text-destructive'>Deactivate Login</p>
+          <p className='text-sm font-medium text-destructive'>
+            Deactivate Login
+          </p>
           <p className='text-xs text-muted-foreground'>
             Removes login access. Teacher data is kept.
           </p>
@@ -449,9 +554,11 @@ function EditLoginForm({
           onClick={handleDeactivate}
           disabled={deactivate.isPending}
         >
-          {deactivate.isPending
-            ? <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-            : <PowerOff className='mr-2 h-4 w-4' />}
+          {deactivate.isPending ? (
+            <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+          ) : (
+            <PowerOff className='mr-2 h-4 w-4' />
+          )}
           Deactivate
         </Button>
       </div>

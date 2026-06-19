@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { getApiErrorMessage } from '@/lib/api-response'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -26,8 +27,11 @@ import {
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { SelectDropdown } from '@/components/select-dropdown'
+import {
+  useCreateDormitory,
+  useUpdateDormitory,
+} from '../hooks/use-dormitories'
 import { type Dormitory } from '../services/dormitory-service'
-import { useCreateDormitory, useUpdateDormitory } from '../hooks/use-dormitories'
 
 const GENDER_OPTIONS = [
   { label: 'Putra (Male)', value: 'PUTRA' },
@@ -117,8 +121,8 @@ export function DormitoriesActionDialog({
         toast.success(`Dormitory "${values.name}" created`)
       }
       onOpenChange(false)
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || 'Failed to save dormitory')
+    } catch (error: unknown) {
+      toast.error(getApiErrorMessage(error, 'Failed to save dormitory'))
     }
   }
 
@@ -150,10 +154,7 @@ export function DormitoriesActionDialog({
                 <FormItem>
                   <FormLabel>Dormitory Name</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder='e.g. Al-Farabi Dormitory'
-                      {...field}
-                    />
+                    <Input placeholder='e.g. Al-Farabi Dormitory' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
