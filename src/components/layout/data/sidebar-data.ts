@@ -15,6 +15,7 @@ import {
   BookMarked,
   CalendarDays,
   Clock,
+  ClipboardCheck,
 } from 'lucide-react'
 import { type SidebarData } from '../types'
 
@@ -104,6 +105,11 @@ export const sidebarData: SidebarData = {
           title: 'Jadwal',
           url: '/schedules',
           icon: CalendarDays,
+        },
+        {
+          title: 'Absensi Santri',
+          url: '/absences',
+          icon: ClipboardCheck,
         },
       ],
     },

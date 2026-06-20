@@ -34,6 +34,7 @@ import { Route as AuthenticatedPermissionsIndexRouteImport } from './routes/_aut
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedDormitoriesIndexRouteImport } from './routes/_authenticated/dormitories/index'
 import { Route as AuthenticatedClassroomsIndexRouteImport } from './routes/_authenticated/classrooms/index'
+import { Route as AuthenticatedAbsencesIndexRouteImport } from './routes/_authenticated/absences/index'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
@@ -175,6 +176,12 @@ const AuthenticatedClassroomsIndexRoute =
     path: '/classrooms/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAbsencesIndexRoute =
+  AuthenticatedAbsencesIndexRouteImport.update({
+    id: '/absences/',
+    path: '/absences/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSettingsNotificationsRoute =
   AuthenticatedSettingsNotificationsRouteImport.update({
     id: '/notifications',
@@ -224,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/absences/': typeof AuthenticatedAbsencesIndexRoute
   '/classrooms/': typeof AuthenticatedClassroomsIndexRoute
   '/dormitories/': typeof AuthenticatedDormitoriesIndexRoute
   '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
@@ -254,6 +262,7 @@ export interface FileRoutesByTo {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/absences': typeof AuthenticatedAbsencesIndexRoute
   '/classrooms': typeof AuthenticatedClassroomsIndexRoute
   '/dormitories': typeof AuthenticatedDormitoriesIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
@@ -287,6 +296,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/_authenticated/absences/': typeof AuthenticatedAbsencesIndexRoute
   '/_authenticated/classrooms/': typeof AuthenticatedClassroomsIndexRoute
   '/_authenticated/dormitories/': typeof AuthenticatedDormitoriesIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
@@ -320,6 +330,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/absences/'
     | '/classrooms/'
     | '/dormitories/'
     | '/help-center/'
@@ -350,6 +361,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/absences'
     | '/classrooms'
     | '/dormitories'
     | '/help-center'
@@ -382,6 +394,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
     | '/_authenticated/settings/notifications'
+    | '/_authenticated/absences/'
     | '/_authenticated/classrooms/'
     | '/_authenticated/dormitories/'
     | '/_authenticated/help-center/'
@@ -587,6 +600,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClassroomsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/absences/': {
+      id: '/_authenticated/absences/'
+      path: '/absences'
+      fullPath: '/absences/'
+      preLoaderRoute: typeof AuthenticatedAbsencesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings/notifications': {
       id: '/_authenticated/settings/notifications'
       path: '/notifications'
@@ -652,6 +672,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
+  AuthenticatedAbsencesIndexRoute: typeof AuthenticatedAbsencesIndexRoute
   AuthenticatedClassroomsIndexRoute: typeof AuthenticatedClassroomsIndexRoute
   AuthenticatedDormitoriesIndexRoute: typeof AuthenticatedDormitoriesIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
@@ -669,6 +690,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
+  AuthenticatedAbsencesIndexRoute: AuthenticatedAbsencesIndexRoute,
   AuthenticatedClassroomsIndexRoute: AuthenticatedClassroomsIndexRoute,
   AuthenticatedDormitoriesIndexRoute: AuthenticatedDormitoriesIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
