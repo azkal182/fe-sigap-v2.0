@@ -11,27 +11,27 @@ import { SidebarNav } from './components/sidebar-nav'
 
 const sidebarNavItems = [
   {
-    title: 'Profile',
+    title: 'Profil',
     href: '/settings',
     icon: <UserCog size={18} />,
   },
   {
-    title: 'Account',
+    title: 'Akun',
     href: '/settings/account',
     icon: <Wrench size={18} />,
   },
   {
-    title: 'Appearance',
+    title: 'Tampilan',
     href: '/settings/appearance',
     icon: <Palette size={18} />,
   },
   {
-    title: 'Notifications',
+    title: 'Notifikasi',
     href: '/settings/notifications',
     icon: <Bell size={18} />,
   },
   {
-    title: 'Display',
+    title: 'Tampilan Layar',
     href: '/settings/display',
     icon: <Monitor size={18} />,
   },

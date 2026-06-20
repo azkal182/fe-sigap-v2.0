@@ -33,7 +33,7 @@ export const sidebarData: SidebarData = {
   ],
   navGroups: [
     {
-      title: 'General',
+      title: 'Umum',
       items: [
         {
           title: 'Dashboard',
@@ -43,99 +43,99 @@ export const sidebarData: SidebarData = {
       ],
     },
     {
-      title: 'User Management',
+      title: 'Manajemen Pengguna',
       items: [
         {
-          title: 'Users',
+          title: 'Pengguna',
           url: '/users',
           icon: Users,
         },
         {
-          title: 'Roles',
+          title: 'Peran',
           url: '/roles',
           icon: ShieldCheck,
         },
         {
-          title: 'Permissions',
+          title: 'Izin Akses',
           url: '/permissions',
           icon: ShieldCheck, // You could choose another icon later
         },
       ],
     },
     {
-      title: 'Master Data',
+      title: 'Data Master',
       items: [
         {
-          title: 'Dormitories',
+          title: 'Asrama',
           url: '/dormitories',
           icon: Building,
         },
         {
-          title: 'Schedule Slots',
+          title: 'Slot Jadwal',
           url: '/schedule-slots',
           icon: Clock,
         },
         {
-          title: 'Students',
+          title: 'Santri',
           url: '/students',
           icon: GraduationCap,
         },
         {
-          title: 'Teachers',
+          title: 'Pengajar',
           url: '/teachers',
           icon: UserCog,
         },
       ],
     },
     {
-      title: 'Academic',
+      title: 'Akademik',
       items: [
         {
-          title: 'Classrooms',
+          title: 'Kelas',
           url: '/classrooms',
           icon: BookOpen,
         },
         {
-          title: 'Subjects',
+          title: 'Mata Pelajaran',
           url: '/subjects',
           icon: BookMarked,
         },
         {
-          title: 'Schedules',
+          title: 'Jadwal',
           url: '/schedules',
           icon: CalendarDays,
         },
       ],
     },
     {
-      title: 'Other',
+      title: 'Lainnya',
       items: [
         {
-          title: 'Settings',
+          title: 'Pengaturan',
           icon: Settings,
           items: [
             {
-              title: 'Profile',
+              title: 'Profil',
               url: '/settings',
               icon: UserCog,
             },
             {
-              title: 'Account',
+              title: 'Akun',
               url: '/settings/account',
               icon: Wrench,
             },
             {
-              title: 'Appearance',
+              title: 'Tampilan',
               url: '/settings/appearance',
               icon: Palette,
             },
             {
-              title: 'Notifications',
+              title: 'Notifikasi',
               url: '/settings/notifications',
               icon: Bell,
             },
             {
-              title: 'Display',
+              title: 'Tampilan Layar',
               url: '/settings/display',
               icon: Monitor,
             },
