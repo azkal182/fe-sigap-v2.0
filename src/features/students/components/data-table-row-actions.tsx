@@ -1,6 +1,7 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { Link } from '@tanstack/react-router'
 import { type Row } from '@tanstack/react-table'
-import { PenLine, Trash2 } from 'lucide-react'
+import { ExternalLink, PenLine, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -41,6 +42,15 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
       <DropdownMenuContent align='end' className='w-44'>
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
+
+        <DropdownMenuItem asChild>
+          <Link to='/students/$studentId' params={{ studentId: student.id }}>
+            Lihat Detail
+            <DropdownMenuShortcut>
+              <ExternalLink size={16} />
+            </DropdownMenuShortcut>
+          </Link>
+        </DropdownMenuItem>
 
         <DropdownMenuItem onClick={() => handleAction('edit')}>
           Edit

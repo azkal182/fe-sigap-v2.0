@@ -36,6 +36,7 @@ import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedDormitoriesIndexRouteImport } from './routes/_authenticated/dormitories/index'
 import { Route as AuthenticatedClassroomsIndexRouteImport } from './routes/_authenticated/classrooms/index'
 import { Route as AuthenticatedAbsencesIndexRouteImport } from './routes/_authenticated/absences/index'
+import { Route as AuthenticatedStudentsStudentIdRouteImport } from './routes/_authenticated/students/$studentId'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
@@ -189,6 +190,12 @@ const AuthenticatedAbsencesIndexRoute =
     path: '/absences/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedStudentsStudentIdRoute =
+  AuthenticatedStudentsStudentIdRouteImport.update({
+    id: '/students/$studentId',
+    path: '/students/$studentId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSettingsNotificationsRoute =
   AuthenticatedSettingsNotificationsRouteImport.update({
     id: '/notifications',
@@ -238,6 +245,7 @@ export interface FileRoutesByFullPath {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
   '/absences/': typeof AuthenticatedAbsencesIndexRoute
   '/classrooms/': typeof AuthenticatedClassroomsIndexRoute
   '/dormitories/': typeof AuthenticatedDormitoriesIndexRoute
@@ -270,6 +278,7 @@ export interface FileRoutesByTo {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
   '/absences': typeof AuthenticatedAbsencesIndexRoute
   '/classrooms': typeof AuthenticatedClassroomsIndexRoute
   '/dormitories': typeof AuthenticatedDormitoriesIndexRoute
@@ -305,6 +314,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/_authenticated/students/$studentId': typeof AuthenticatedStudentsStudentIdRoute
   '/_authenticated/absences/': typeof AuthenticatedAbsencesIndexRoute
   '/_authenticated/classrooms/': typeof AuthenticatedClassroomsIndexRoute
   '/_authenticated/dormitories/': typeof AuthenticatedDormitoriesIndexRoute
@@ -340,6 +350,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/students/$studentId'
     | '/absences/'
     | '/classrooms/'
     | '/dormitories/'
@@ -372,6 +383,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/students/$studentId'
     | '/absences'
     | '/classrooms'
     | '/dormitories'
@@ -406,6 +418,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
     | '/_authenticated/settings/notifications'
+    | '/_authenticated/students/$studentId'
     | '/_authenticated/absences/'
     | '/_authenticated/classrooms/'
     | '/_authenticated/dormitories/'
@@ -627,6 +640,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAbsencesIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/students/$studentId': {
+      id: '/_authenticated/students/$studentId'
+      path: '/students/$studentId'
+      fullPath: '/students/$studentId'
+      preLoaderRoute: typeof AuthenticatedStudentsStudentIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings/notifications': {
       id: '/_authenticated/settings/notifications'
       path: '/notifications'
@@ -692,6 +712,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
+  AuthenticatedStudentsStudentIdRoute: typeof AuthenticatedStudentsStudentIdRoute
   AuthenticatedAbsencesIndexRoute: typeof AuthenticatedAbsencesIndexRoute
   AuthenticatedClassroomsIndexRoute: typeof AuthenticatedClassroomsIndexRoute
   AuthenticatedDormitoriesIndexRoute: typeof AuthenticatedDormitoriesIndexRoute
@@ -711,6 +732,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
+  AuthenticatedStudentsStudentIdRoute: AuthenticatedStudentsStudentIdRoute,
   AuthenticatedAbsencesIndexRoute: AuthenticatedAbsencesIndexRoute,
   AuthenticatedClassroomsIndexRoute: AuthenticatedClassroomsIndexRoute,
   AuthenticatedDormitoriesIndexRoute: AuthenticatedDormitoriesIndexRoute,
