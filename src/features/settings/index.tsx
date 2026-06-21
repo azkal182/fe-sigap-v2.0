@@ -148,10 +148,8 @@ export function SettingsPage() {
 // ─── Tab: Profil ──────────────────────────────────────────────────────────────
 
 function ProfileTab() {
-  const { user, setUser } = useAuthStore((s) => ({
-    user: s.auth.user,
-    setUser: s.auth.setUser,
-  }))
+  const user = useAuthStore((s) => s.auth.user)
+  const setUser = useAuthStore((s) => s.auth.setUser)
 
   const form = useForm<ProfileValues>({
     resolver: zodResolver(profileSchema),
@@ -305,7 +303,7 @@ function ProfileTab() {
 // ─── Tab: Keamanan (ganti password) ──────────────────────────────────────────
 
 function SecurityTab() {
-  const { user } = useAuthStore((s) => s.auth)
+  const user = useAuthStore((s) => s.auth.user)
   const [showCurrent, setShowCurrent] = useState(false)
   const [showNew, setShowNew] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
