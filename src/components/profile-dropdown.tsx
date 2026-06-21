@@ -1,6 +1,9 @@
 import { Link } from '@tanstack/react-router'
+import { LogOut, Settings, UserCircle } from 'lucide-react'
+import { useAuthStore } from '@/stores/auth-store'
 import useDialogState from '@/hooks/use-dialog-state'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -9,13 +12,26 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SignOutDialog } from '@/components/sign-out-dialog'
 
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+}
+
 export function ProfileDropdown() {
   const [open, setOpen] = useDialogState()
+  const user = useAuthStore((s) => s.auth.user)
+
+  const displayName = user?.name ?? 'Pengguna'
+  const displayEmail = user?.email ?? ''
+  const initials = getInitials(displayName)
 
   return (
     <>
@@ -23,48 +39,50 @@ export function ProfileDropdown() {
         <DropdownMenuTrigger asChild>
           <Button variant='ghost' className='relative h-8 w-8 rounded-full'>
             <Avatar className='h-8 w-8'>
-              <AvatarImage src='/avatars/01.png' alt='@shadcn' />
-              <AvatarFallback>SN</AvatarFallback>
+              <AvatarFallback className='bg-primary/10 text-xs font-semibold text-primary'>
+                {initials}
+              </AvatarFallback>
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
+
         <DropdownMenuContent className='w-56' align='end' forceMount>
           <DropdownMenuLabel className='font-normal'>
-            <div className='flex flex-col gap-1.5'>
-              <p className='text-sm leading-none font-medium'>satnaing</p>
+            <div className='flex flex-col gap-1'>
+              <p className='text-sm leading-none font-medium'>{displayName}</p>
               <p className='text-xs leading-none text-muted-foreground'>
-                satnaingdev@gmail.com
+                {displayEmail}
               </p>
+              {user?.role?.name && (
+                <Badge variant='secondary' className='mt-1 w-fit text-xs'>
+                  {user.role.name}
+                </Badge>
+              )}
             </div>
           </DropdownMenuLabel>
+
           <DropdownMenuSeparator />
+
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
               <Link to='/settings'>
-                Profile
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                <UserCircle size={14} />
+                Profil Saya
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <Link to='/settings'>
-                Billing
-                <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                <Settings size={14} />
+                Pengaturan
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link to='/settings'>
-                Settings
-                <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>New Team</DropdownMenuItem>
           </DropdownMenuGroup>
+
           <DropdownMenuSeparator />
+
           <DropdownMenuItem variant='destructive' onClick={() => setOpen(true)}>
-            Sign out
-            <DropdownMenuShortcut className='text-current'>
-              ⇧⌘Q
-            </DropdownMenuShortcut>
+            <LogOut size={14} />
+            Keluar
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
