@@ -7,10 +7,6 @@ import {
   Settings,
   UserCog,
   UserCheck,
-  Wrench,
-  Palette,
-  Bell,
-  Monitor,
   Command,
   BookOpen,
   BookMarked,
@@ -124,34 +120,8 @@ export const sidebarData: SidebarData = {
       items: [
         {
           title: 'Pengaturan',
+          url: '/settings',
           icon: Settings,
-          items: [
-            {
-              title: 'Profil',
-              url: '/settings',
-              icon: UserCog,
-            },
-            {
-              title: 'Akun',
-              url: '/settings/account',
-              icon: Wrench,
-            },
-            {
-              title: 'Tampilan',
-              url: '/settings/appearance',
-              icon: Palette,
-            },
-            {
-              title: 'Notifikasi',
-              url: '/settings/notifications',
-              icon: Bell,
-            },
-            {
-              title: 'Tampilan Layar',
-              url: '/settings/display',
-              icon: Monitor,
-            },
-          ],
         },
       ],
     },
