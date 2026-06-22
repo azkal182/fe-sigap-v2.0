@@ -1,5 +1,3 @@
-'use client'
-
 import { useState } from 'react'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -31,7 +29,7 @@ export function Subjects() {
         <ProfileDropdown />
       </Header>
 
-      <Main className='flex flex-1 flex-col gap-5'>
+      <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         {/* Page title */}
         <div>
           <h2 className='text-2xl font-bold tracking-tight'>Subjects</h2>
@@ -40,7 +38,7 @@ export function Subjects() {
           </p>
         </div>
 
-        {/* Top bar: context (left) + filter (right) */}
+        {/* Context banner (left) + Filter bar (right) */}
         <div className='flex flex-wrap items-start justify-between gap-4'>
           <div className='max-w-xs min-w-56 flex-1'>
             <SubjectContextBanner filter={filter} />
@@ -50,7 +48,7 @@ export function Subjects() {
           </div>
         </div>
 
-        {/* Subject list */}
+        {/* Subject table */}
         <SubjectListCard filter={filter} />
       </Main>
     </>
